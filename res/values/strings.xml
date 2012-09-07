@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">Locast Core Example</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_example">ExampleActivity</string>
+
+    <!-- override the library? -->
+    <string name="locast_provider_authority" translatable="false">edu.mit.mobile.android.locastcore.example</string>
+</resources>
