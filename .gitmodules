@@ -1,0 +1,6 @@
+[submodule "libs-src/ActionBarSherlock"]
+	path = libs-src/ActionBarSherlock
+	url = https://github.com/JakeWharton/ActionBarSherlock.git
+[submodule "libs-src/ImageCache"]
+	path = libs-src/ImageCache
+	url = https://github.com/mitmel/Android-Image-Cache.git

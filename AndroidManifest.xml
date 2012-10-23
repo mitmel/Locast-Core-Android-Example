@@ -1,16 +1,53 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="edu.mit.mobile.android.locast.locastcoreexample"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="edu.mit.mobile.android.locast.example"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="0.1" >
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="15" />
+        android:targetSdkVersion="16" />
+
+    <!-- for sensing location -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- to store media -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- to talk with the server -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- account system -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+
+    <!-- sync -->
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+
+    <!-- to show more useful error messages if there's a loss of connectivity -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <!-- when using Google Maps, this is needed -->
+        <uses-library android:name="com.google.android.maps" />
+
+        <!-- specify the URL of the site here -->
+        <meta-data
+            android:name="edu.mit.mobile.android.locast.base_url"
+            android:value="https://locast.mit.edu/openlocast/api/" />
+
         <activity
             android:name=".ExampleActivity"
             android:label="@string/title_activity_example" >
@@ -20,6 +57,139 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".CastListActivity"
+            android:label="@string/title_activity_cast_list" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- auth -->
+
+        <activity android:name=".accounts.AuthenticatorActivity" />
+        <activity android:name=".accounts.RegisterActivity" />
+
+        <service
+            android:name=".accounts.AuthenticationService"
+            android:exported="true"
+            android:permission="android.permission.AUTHENTICATE_ACCOUNTS" >
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <!-- ensure the XML document in res/xml/authenticator matches the other values specified in this manifest -->
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <!--
+	Synchronization
+	
+	Ensure that the process below matches the process of the MediaSync and ContentProvider, otherwise they may not work properly.
+        -->
+
+        <service
+            android:name=".sync.SyncService"
+            android:exported="true"
+            android:process="edu.mit.mobile.android.locast.example.Sync"
+            tools:ignore="ExportedService" >
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <!--
+             The Locast sync framework will often request synchronizing content based on its public address.
+             Due to this, the intent filter below needs to be configured to match the server that will be used for this site.
+             If an address is incorrect, it should be removed, as it could break sync for another Locast app.
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.SYNC" />
+
+                <!-- http[s]://mel-pydev.mit.edu/openlocast/api/ -->
+                <data
+                    android:host="mel-pydev.mit.edu"
+                    android:pathPrefix="/openlocast/api/"
+                    android:scheme="http" />
+                <data
+                    android:host="mel-pydev.mit.edu"
+                    android:pathPrefix="/openlocast/api/"
+                    android:scheme="https" />
+
+                <!-- http[s]://locast.mit.edu/openlocast/api/ -->
+                <data
+                    android:host="locast.mit.edu"
+                    android:pathPrefix="/openlocast/api/"
+                    android:scheme="http" />
+                <data
+                    android:host="locast.mit.edu"
+                    android:pathPrefix="/openlocast/api/"
+                    android:scheme="https" />
+            </intent-filter>
+
+            <!--
+            More often, syncs will be requested based on the local MIME type. These need to be configured based on the authority
+            being used. See the README for details.
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.SYNC" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <!-- MIME type for a cast -->
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.cast" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.cast" />
+
+                <!-- MIME type for cast media -->
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.cast.#.media" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.cast.#.media" />
+
+                <!-- MIME type for a collection -->
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.collection" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.collection" />
+            </intent-filter>
+
+            <!-- make sure the the associated syncadapter XML file matches the items here -->
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <!--
+        The below service definition is for synchronizing media (pictures, videos). This is 
+        the service responsible for uploading/downloading content from the server.
+        
+        Make sure the process here matches the content provider process below, or it will not work properly. 
+        
+        Additionally, make sure the MIME types match that of the other MIME type definitions. See the README for details.
+        -->
+        <service
+            android:name=".sync.MediaSyncService"
+            android:exported="false"
+            android:process="edu.mit.mobile.android.locast.example.Sync" >
+            <intent-filter>
+                <action android:name="edu.mit.mobile.android.locast.ACTION_SYNC_RESOURCES" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.cast.#.media" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.cast.#.media" />
+            </intent-filter>
+        </service>
+
+        <!--
+         This defines the content provider. Make sure the authority here matches the one defined in the provider.
+         Additionally, make sure the process here uses the same namespace as the authority before publishing the app.
+        -->
+
+        <provider
+            android:name=".data.LocastProvider"
+            android:authorities="edu.mit.mobile.android.locast.example"
+            android:exported="false"
+            android:process="edu.mit.mobile.android.locast.example.Sync" />
     </application>
 
 </manifest>
