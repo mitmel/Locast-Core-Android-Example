@@ -8,6 +8,7 @@ import edu.mit.mobile.android.content.ProviderUtils;
 import edu.mit.mobile.android.content.UriPath;
 import edu.mit.mobile.android.content.column.DBColumn;
 import edu.mit.mobile.android.content.column.TextColumn;
+import edu.mit.mobile.android.locast.data.Commentable;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.Locatable;
 import edu.mit.mobile.android.locast.data.PrivatelyAuthorable;
@@ -17,14 +18,14 @@ import edu.mit.mobile.android.locast.example.R;
 
 @UriPath(Cast.PATH)
 public class Cast extends JsonSyncableItem implements Titled.Columns, PrivatelyAuthorable.Columns,
-        Locatable.Columns {
+        Locatable.Columns, Commentable.Columns {
     public final static String TAG = Cast.class.getSimpleName();
 
     @DBColumn(type = TextColumn.class)
     public static final String COL_MEDIA_PUBLIC_URL = "media_url";
 
     @DBColumn(type = TextColumn.class)
-    public static final String COL_THUMBNAIL_URL = "thumbnail_url";
+    public static final String COL_PREVIEW_IMAGE_URL = "preview_url";
 
     public static final ForeignKeyManager CAST_MEDIA = new ForeignKeyManager(CastMedia.class);
 
@@ -52,6 +53,14 @@ public class Cast extends JsonSyncableItem implements Titled.Columns, PrivatelyA
             putAll(Titled.SYNC_MAP);
             putAll(PrivatelyAuthorable.SYNC_MAP);
             putAll(Locatable.SYNC_MAP);
+            putAll(Commentable.SYNC_MAP);
+
+            put(COL_MEDIA_PUBLIC_URL, new SyncFieldMap("media", SyncFieldMap.STRING,
+                    SyncFieldMap.SYNC_FROM));
+
+            put(COL_PREVIEW_IMAGE_URL, new SyncFieldMap("preview_image", SyncFieldMap.STRING,
+                    SyncFieldMap.SYNC_FROM | SyncFieldMap.FLAG_OPTIONAL));
+
         }
     }
 

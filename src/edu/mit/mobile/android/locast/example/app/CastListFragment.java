@@ -36,10 +36,10 @@ public class CastListFragment extends ListFragment implements LoaderCallbacks<Cu
     // private
 
     // columns to pull data from...
-    private static final String[] FROM = { Cast.COL_TITLE, Cast.COL_THUMBNAIL_URL };
+    private static final String[] FROM = { Cast.COL_TITLE, Cast.COL_PREVIEW_IMAGE_URL };
 
     // ... mapping to views
-    private static final int[] TO = { android.R.id.text1, R.id.thumbnail };
+    private static final int[] TO = { R.id.title, R.id.thumbnail };
 
     // ... and a list of the views that should be processed by the ImageCache
     private static final int[] IMAGE_IDS = new int[] { R.id.thumbnail };
@@ -86,6 +86,15 @@ public class CastListFragment extends ListFragment implements LoaderCallbacks<Cu
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.cast_list_fragment, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+
+        getListView().addFooterView(
+                getLayoutInflater(savedInstanceState).inflate(R.layout.list_footer, null), null,
+                false);
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
