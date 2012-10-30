@@ -21,12 +21,15 @@
     </style>
 
     <style name="Cast.Author"></style>
-
+    <style name="Cast.Description"></style>
+    
     <!-- styles specific to ListItems -->
     <style name="Cast.Thumbnail.ListItem"></style>
 
     <style name="Cast.Title.ListItem"></style>
 
     <style name="Cast.Author.ListItem"></style>
+    
+    <style name="Cast.Description.ListItem"></style>
 
 </resources>

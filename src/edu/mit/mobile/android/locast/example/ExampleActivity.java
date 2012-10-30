@@ -14,8 +14,10 @@ import com.actionbarsherlock.view.Menu;
 import edu.mit.mobile.android.locast.data.Authorable;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.app.CastListFragment;
+import edu.mit.mobile.android.locast.example.app.CollectionListFragment;
 import edu.mit.mobile.android.locast.example.app.NoAccountFragment;
 import edu.mit.mobile.android.locast.example.data.Cast;
+import edu.mit.mobile.android.locast.example.data.Collection;
 
 public class ExampleActivity extends SherlockFragmentActivity implements TabListener {
 
@@ -23,6 +25,7 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
 
     private static final String TAG_SPLASH = "splash";
     private static final String TAG_NEW = "new";
+    private static final String TAG_COLLECTIONS = "collections";
     private static final String TAG_NEARBY = "nearby";
     private static final String TAG_UNPUBLISHED = "unpublished";
     private static final String TAG_MY = "my";
@@ -98,6 +101,8 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
             actionBar.addTab(actionBar.newTab().setText(R.string.main_tab_whats_new)
                     .setTabListener(this).setTag(TAG_NEW));
+            actionBar.addTab(actionBar.newTab().setText(R.string.main_tab_collections)
+                    .setTabListener(this).setTag(TAG_COLLECTIONS));
 
         }
     }
@@ -137,6 +142,10 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
         } else if (TAG_UNPUBLISHED.equals(tag)) {
             f = CastListFragment.instantiate(Cast.CONTENT_URI.buildUpon()
                     .appendQueryParameter(Cast.COL_DRAFT, "1").build());
+
+        } else if (TAG_COLLECTIONS.equals(tag)) {
+            f = CollectionListFragment.instantiate(Collection.CONTENT_URI.buildUpon()
+                    .appendQueryParameter(Collection.COL_DRAFT + "!", "1").build());
 
         } else {
             throw new IllegalArgumentException("cannot instantiate fragment for tag " + tag);

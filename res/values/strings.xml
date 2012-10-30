@@ -8,5 +8,6 @@
     <string name="titled_description">Description</string>
     <string name="untitled"><i>untitled</i></string>
     <string name="main_tab_whats_new">What\'s new</string>
+    <string name="main_tab_collections">Collections</string>
 
 </resources>

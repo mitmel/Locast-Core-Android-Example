@@ -36,6 +36,8 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
 
         addChildDirAndItemUri(castsMedia, Cast.PATH, CastMedia.PATH);
 
+        addDirAndItemUri(collections, Collection.PATH);
+
         addChildDirAndItemUri(collectionCasts, Collection.PATH, Cast.PATH);
 
     }
@@ -59,6 +61,9 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
         // TODO this is the only hard-coded URL. This should be removed eventually.
         if (Cast.TYPE_DIR.equals(type)) {
             return NetworkClient.getBaseUrlFromManifest(context) + "cast/";
+
+        } else if (Collection.TYPE_DIR.equals(type)) {
+            return NetworkClient.getBaseUrlFromManifest(context) + "collection/";
 
             // TODO find a way to make this generic. Inspect the SYNC_MAP somehow?
             // } else if (CastMedia.TYPE_DIR.equals(type)) {
