@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    style="@style/Cast.Detail"
+    android:layout_height="match_parent" >
+
+    <Gallery
+        android:id="@+id/cast_media"
+        style="@style/Cast.Media.Detail"
+        android:layout_width="match_parent"
+        android:layout_height="200dip" />
+
+    <TextView
+        android:id="@+id/description"
+        style="@style/Cast.Description.Detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cast_media" />
+
+</RelativeLayout>
