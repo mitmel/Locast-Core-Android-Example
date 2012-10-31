@@ -2,6 +2,7 @@ package edu.mit.mobile.android.locast.example.data;
 
 import android.database.Cursor;
 import android.net.Uri;
+import edu.mit.mobile.android.content.ProviderUtils;
 import edu.mit.mobile.android.content.UriPath;
 import edu.mit.mobile.android.content.column.DBForeignKeyColumn;
 import edu.mit.mobile.android.locast.data.SyncMap;
@@ -37,6 +38,10 @@ public class CastMedia extends VideoContent {
         public ItemSyncMap() {
 
         }
+    }
+
+    public static Uri getParent(Uri castMedia) {
+        return ProviderUtils.removeLastPathSegment(castMedia);
     }
 
     @Override

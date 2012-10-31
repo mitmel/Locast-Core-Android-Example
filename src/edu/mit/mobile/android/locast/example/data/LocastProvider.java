@@ -1,11 +1,13 @@
 package edu.mit.mobile.android.locast.example.data;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 import edu.mit.mobile.android.content.ForeignKeyDBHelper;
 import edu.mit.mobile.android.content.GenericDBHelper;
 import edu.mit.mobile.android.content.m2m.M2MDBHelper;
+import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.NoPublicPath;
 import edu.mit.mobile.android.locast.net.NetworkClient;
 import edu.mit.mobile.android.locast.sync.SyncableProvider;
@@ -48,6 +50,34 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
         return true;
     }
 
+    /**
+     * @param context
+     * @param uri
+     *            the URI of the item whose field should be queried
+     * @param field
+     *            the string name of the field
+     * @return
+     */
+    private static String getPathFromField(Context context, Uri uri, String field) {
+        String path = null;
+        final String[] generalProjection = { JsonSyncableItem._ID, field };
+        final Cursor c = context.getContentResolver().query(uri, generalProjection, null, null,
+                null);
+        try {
+            if (c.getCount() == 1 && c.moveToFirst()) {
+                final String storedPath = c.getString(c.getColumnIndex(field));
+                path = storedPath;
+            } else {
+                throw new IllegalArgumentException("could not get path from field '" + field
+                        + "' in uri " + uri);
+            }
+        } finally {
+            c.close();
+        }
+        return path;
+    }
+
+
     @Override
     public String getPostPath(Context context, Uri uri) throws NoPublicPath {
         return getPublicPath(context, uri);
@@ -61,6 +91,9 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
         // TODO this is the only hard-coded URL. This should be removed eventually.
         if (Cast.TYPE_DIR.equals(type)) {
             return NetworkClient.getBaseUrlFromManifest(context) + "cast/";
+
+        } else if (CastMedia.TYPE_DIR.equals(type)) {
+            return getPathFromField(context, CastMedia.getParent(uri), Cast.COL_MEDIA_PUBLIC_URL);
 
         } else if (Collection.TYPE_DIR.equals(type)) {
             return NetworkClient.getBaseUrlFromManifest(context) + "collection/";

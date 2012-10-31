@@ -55,7 +55,8 @@ public class Cast extends JsonSyncableItem implements Titled.Columns, PrivatelyA
             putAll(Locatable.SYNC_MAP);
             putAll(Commentable.SYNC_MAP);
 
-            put(COL_MEDIA_PUBLIC_URL, new SyncFieldMap("media", SyncFieldMap.STRING,
+            put(COL_MEDIA_PUBLIC_URL, new SyncChildRelation("media",
+                    new SyncChildRelation.SimpleRelationship(CastMedia.PATH),
                     SyncFieldMap.SYNC_FROM));
 
             put(COL_PREVIEW_IMAGE_URL, new SyncFieldMap("preview_image", SyncFieldMap.STRING,
@@ -67,6 +68,7 @@ public class Cast extends JsonSyncableItem implements Titled.Columns, PrivatelyA
     public static final ItemSyncMap SYNC_MAP = new ItemSyncMap();
 
     public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.cast";
+    public static final String TYPE_ITEM = "vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.cast";
 
     @Override
     public SyncMap getSyncMap() {
