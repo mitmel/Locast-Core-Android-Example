@@ -15,6 +15,8 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 import edu.mit.mobile.android.imagecache.ImageCache;
 import edu.mit.mobile.android.imagecache.ImageCache.OnImageLoadListener;
@@ -33,6 +35,7 @@ public class LocatableItemMapActivity extends FragmentActivity implements Loader
     private Bundle mLocatableArgs;
 
     private GoogleStaticMapView mMap;
+    private View mMapFrame;
 
     private ImageCache mImageCache;
 
@@ -61,6 +64,9 @@ public class LocatableItemMapActivity extends FragmentActivity implements Loader
         }
 
         mMap = (GoogleStaticMapView) findViewById(R.id.map);
+        mMapFrame = findViewById(R.id.map_frame);
+        mMapFrame.setVisibility(View.INVISIBLE);
+
         mImageCache = ImageCache.getInstance(this);
     }
 
@@ -124,6 +130,7 @@ public class LocatableItemMapActivity extends FragmentActivity implements Loader
         try {
             d = mImageCache.loadImage(R.id.map, mapUrl, mMap.getMapWidth(), mMap.getMapHeight());
             if (d != null) {
+                mMapFrame.setVisibility(View.VISIBLE);
                 mMap.setImageDrawable(d);
             }
 
@@ -140,6 +147,8 @@ public class LocatableItemMapActivity extends FragmentActivity implements Loader
     @Override
     public void onImageLoaded(long id, Uri imageUri, Drawable image) {
         if (R.id.map == id) {
+            mMapFrame.setVisibility(View.VISIBLE);
+            mMapFrame.startAnimation(AnimationUtils.makeInChildBottomAnimation(this));
             mMap.setImageDrawable(image);
         }
     }
