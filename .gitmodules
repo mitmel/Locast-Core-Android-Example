@@ -4,3 +4,6 @@
 [submodule "libs-src/ImageCache"]
 	path = libs-src/ImageCache
 	url = https://github.com/mitmel/Android-Image-Cache.git
+[submodule "libs-src/staticmap"]
+	path = libs-src/staticmap
+	url = http://mel-tools.mit.edu/git-ro/android-staticmap.git

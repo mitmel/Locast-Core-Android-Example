@@ -30,7 +30,16 @@
     <style name="Cast.Title.ListItem"></style>
 
     <style name="Cast.Author.ListItem"></style>
-    
+
     <style name="Cast.Description.ListItem"></style>
+
+    <!-- Locatable item map view -->
+    <style name="Locatable"></style>
+
+    <style name="Locatable.Map"></style>
+
+    <style name="Locatable.Map.Frame">
+        <item name="android:foreground">@drawable/map_overshadow_pointer</item>
+    </style>
 
 </resources>

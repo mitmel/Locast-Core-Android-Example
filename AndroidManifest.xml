@@ -48,6 +48,10 @@
             android:name="edu.mit.mobile.android.locast.base_url"
             android:value="https://locast.mit.edu/openlocast/api/" />
 
+        <meta-data
+            android:name="edu.mit.mobile.android.maps.GOOGLE_STATIC_MAPS_API_KEY"
+android:value="" />
+
         <activity
             android:name=".ExampleActivity"
             android:label="@string/title_activity_example" >
@@ -55,6 +59,15 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".app.LocatableItemMapActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.cast" />
             </intent-filter>
         </activity>
 
