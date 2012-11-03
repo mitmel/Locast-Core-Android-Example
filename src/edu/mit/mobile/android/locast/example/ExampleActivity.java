@@ -30,10 +30,19 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
     private static final String TAG_UNPUBLISHED = "unpublished";
     private static final String TAG_MY = "my";
 
+    private static final String INSTANCE_CURRENT_TAB = "edu.mit.mobile.android.locast.example.INSTANCE_CURRENT_TAB";
+
+    private static final int TAB_NONE_SELECTED = ActionBar.Tab.INVALID_POSITION;
+    private int mRestoreTab = TAB_NONE_SELECTED;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_example);
+
+        if (savedInstanceState != null) {
+            mRestoreTab = savedInstanceState.getInt(INSTANCE_CURRENT_TAB, TAB_NONE_SELECTED);
+        }
     }
 
     @Override
@@ -42,6 +51,16 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
 
         showSplashOrMain();
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        final Tab t = getSupportActionBar().getSelectedTab();
+        if (t != null) {
+            outState.putInt(INSTANCE_CURRENT_TAB, t.getPosition());
+        }
     }
 
     /**
@@ -96,6 +115,7 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
             ft.remove(f);
             ft.commit();
         }
+
         final ActionBar actionBar = getSupportActionBar();
         if (ActionBar.NAVIGATION_MODE_TABS != actionBar.getNavigationMode()) {
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -104,6 +124,9 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
             actionBar.addTab(actionBar.newTab().setText(R.string.main_tab_collections)
                     .setTabListener(this).setTag(TAG_COLLECTIONS));
 
+            if (mRestoreTab != TAB_NONE_SELECTED) {
+                actionBar.setSelectedNavigationItem(mRestoreTab);
+            }
         }
     }
 
@@ -111,9 +134,19 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
     public void onTabSelected(Tab tab, FragmentTransaction ft) {
         final FragmentManager fm = getSupportFragmentManager();
 
+        Fragment f = fm.findFragmentById(android.R.id.content);
+
         final String tag = (String) tab.getTag();
 
-        final Fragment f = fm.findFragmentByTag(tag);
+        if (f != null && !tag.equals(f.getTag())) {
+                ft.detach(f);
+            f = null;
+        }
+
+        if (f == null) {
+            f = fm.findFragmentByTag(tag);
+        }
+
         if (f != null) {
             ft.attach(f);
         } else {
