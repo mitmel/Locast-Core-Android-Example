@@ -36,7 +36,8 @@ public class CastMedia extends VideoContent {
         private static final long serialVersionUID = 2603776320366624920L;
 
         public ItemSyncMap() {
-
+            // this is where you could put other fields. eg:
+            // put(COL_LOCAL_COLUMN, new SyncFieldMap("remote_key", SyncFieldMap.STRING));
         }
     }
 
