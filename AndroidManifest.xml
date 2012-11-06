@@ -71,6 +71,18 @@ android:value="" />
             </intent-filter>
         </activity>
 
+        <!-- collections -->
+
+        <activity android:name=".app.CollectionDetailActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.collection" />
+            </intent-filter>
+        </activity>
+
         <!-- auth -->
 
         <activity android:name=".accounts.AuthenticatorActivity" />

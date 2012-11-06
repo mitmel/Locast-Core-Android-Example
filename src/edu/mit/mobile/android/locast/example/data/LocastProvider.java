@@ -7,6 +7,7 @@ import android.util.Log;
 import edu.mit.mobile.android.content.ForeignKeyDBHelper;
 import edu.mit.mobile.android.content.GenericDBHelper;
 import edu.mit.mobile.android.content.m2m.M2MDBHelper;
+import edu.mit.mobile.android.locast.data.JSONSyncableIdenticalChildFinder;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.NoPublicPath;
 import edu.mit.mobile.android.locast.net.NetworkClient;
@@ -32,15 +33,28 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
 
         final GenericDBHelper collections = new GenericDBHelper(Collection.class);
 
-        final M2MDBHelper collectionCasts = new M2MDBHelper(collections, casts);
+        final M2MDBHelper collectionCasts = new M2MDBHelper(collections, casts,
+                new JSONSyncableIdenticalChildFinder());
 
+        // /cast/
+        // /cast/1/
         addDirAndItemUri(casts, Cast.PATH);
 
+        // /cast/1/media/
+        // /cast/1/media/1/
         addChildDirAndItemUri(castsMedia, Cast.PATH, CastMedia.PATH);
 
+        // /collection/
+        // /collection/1/
         addDirAndItemUri(collections, Collection.PATH);
 
+        // /collection/1/cast/
+        // /collection/1/cast/1/
         addChildDirAndItemUri(collectionCasts, Collection.PATH, Cast.PATH);
+
+        // /collection/1/cast/1/media/
+        // /collection/1/cast/1/media/1/
+        addChildDirAndItemUri(castsMedia, Collection.PATH + "/#/" + Cast.PATH, CastMedia.PATH);
 
     }
 
@@ -76,7 +90,6 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
         }
         return path;
     }
-
 
     @Override
     public String getPostPath(Context context, Uri uri) throws NoPublicPath {
