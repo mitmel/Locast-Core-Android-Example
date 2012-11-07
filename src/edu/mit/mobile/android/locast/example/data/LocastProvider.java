@@ -6,10 +6,12 @@ import android.net.Uri;
 import android.util.Log;
 import edu.mit.mobile.android.content.ForeignKeyDBHelper;
 import edu.mit.mobile.android.content.GenericDBHelper;
+import edu.mit.mobile.android.content.ProviderUtils;
 import edu.mit.mobile.android.content.m2m.M2MDBHelper;
 import edu.mit.mobile.android.locast.data.JSONSyncableIdenticalChildFinder;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.NoPublicPath;
+import edu.mit.mobile.android.locast.net.LocastApplicationCallbacks;
 import edu.mit.mobile.android.locast.net.NetworkClient;
 import edu.mit.mobile.android.locast.sync.SyncableProvider;
 import edu.mit.mobile.android.locast.sync.SyncableSimpleContentProvider;
@@ -22,6 +24,8 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
     private static final int DB_VER = 1;
 
     private static final String TAG = LocastProvider.class.getSimpleName();
+
+    private String mBaseUrl;
 
     public LocastProvider() {
         super(AUTHORITY, DB_VER);
@@ -101,15 +105,27 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
         Log.d(TAG, "getPublicPath " + uri);
         final String type = getType(uri);
 
+        if (mBaseUrl == null) {
+            final NetworkClient nc = ((LocastApplicationCallbacks) context.getApplicationContext())
+                    .getNetworkClient(context, null);
+            mBaseUrl = nc.getBaseUrl();
+        }
+
         // TODO this is the only hard-coded URL. This should be removed eventually.
         if (Cast.TYPE_DIR.equals(type)) {
-            return NetworkClient.getBaseUrlFromManifest(context) + "cast/";
+            if (uri.getPathSegments().size() == 1) {
+                return mBaseUrl + "cast/";
+            } else {
+                return getPathFromField(context, ProviderUtils.removeLastPathSegment(uri),
+                        Collection.COL_CASTS_URI);
+            }
 
         } else if (CastMedia.TYPE_DIR.equals(type)) {
             return getPathFromField(context, CastMedia.getParent(uri), Cast.COL_MEDIA_PUBLIC_URL);
 
+            // TODO this too
         } else if (Collection.TYPE_DIR.equals(type)) {
-            return NetworkClient.getBaseUrlFromManifest(context) + "collection/";
+            return mBaseUrl + "collection/";
 
             // TODO find a way to make this generic. Inspect the SYNC_MAP somehow?
             // } else if (CastMedia.TYPE_DIR.equals(type)) {
