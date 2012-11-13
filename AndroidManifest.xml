@@ -64,9 +64,16 @@ android:value="" />
         </activity>
 
         <!-- casts -->
-        <activity android:name=".app.LocatableItemMapActivity" >
+        <activity android:name=".app.CastViewEditActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.cast" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 

@@ -8,9 +8,9 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -18,20 +18,22 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
 import edu.mit.mobile.android.imagecache.ImageCache;
 import edu.mit.mobile.android.imagecache.ImageCache.OnImageLoadListener;
 import edu.mit.mobile.android.locast.data.Locatable;
 import edu.mit.mobile.android.locast.example.R;
-import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.maps.GoogleStaticMapView;
 import edu.mit.mobile.android.maps.OnMapUpdateListener;
 
-public class LocatableItemMapActivity extends FragmentActivity implements LoaderCallbacks<Cursor>,
+public abstract class LocatableItemMapActivity extends SherlockFragmentActivity implements
         OnImageLoadListener, OnMapUpdateListener {
 
-    private static final String[] PROJECTION = new String[] { Locatable.Columns.COL_LATITUDE,
+    protected static final String[] PROJECTION = new String[] { Locatable.Columns.COL_LATITUDE,
             Locatable.Columns.COL_LONGITUDE };
-    private static final int LOCATABLE_LOADER = 100;
+    private static final int LOCATABLE_LOADER = 200;
     private Bundle mLocatableArgs;
 
     private GoogleStaticMapView mMap;
@@ -51,14 +53,16 @@ public class LocatableItemMapActivity extends FragmentActivity implements Loader
 
         final String action = getIntent().getAction();
 
+        LoaderManager.enableDebugLogging(true);
+
         final Uri data = getIntent().getData();
 
-        if (Intent.ACTION_VIEW.equals(action)) {
+        if (Intent.ACTION_VIEW.equals(action) || Intent.ACTION_EDIT.equals(action)) {
             mLocatableArgs = new Bundle();
             mLocatableArgs.putParcelable(ARGS_LOCATABLE, data);
             loadContentFragment(getIntent());
         } else {
-            Toast.makeText(this, "cannot handle intent", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.err_unhandled_intent, Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -70,18 +74,21 @@ public class LocatableItemMapActivity extends FragmentActivity implements Loader
         mImageCache = ImageCache.getInstance(this);
     }
 
-    private void loadContentFragment(Intent intent) {
-        final String type = intent.resolveType(getContentResolver());
-        if (Cast.TYPE_ITEM.equals(type)) {
-            final FragmentManager fm = getSupportFragmentManager();
+    protected abstract boolean onLoadContentFragment(Intent intent, FragmentTransaction ft);
 
-            final String data = intent.getDataString();
-            final Fragment f = fm.findFragmentByTag(data);
-            if (f == null) {
-                final FragmentTransaction ft = fm.beginTransaction();
-                final CastDetailFragment cf = CastDetailFragment.getInstance(intent.getData());
-                ft.replace(R.id.content, cf, data);
+    private void loadContentFragment(Intent intent) {
+        final FragmentManager fm = getSupportFragmentManager();
+
+        final String data = intent.getDataString() + intent.getAction();
+        final Fragment f = fm.findFragmentByTag(data);
+
+        if (f == null) {
+            final FragmentTransaction ft = fm.beginTransaction();
+            if (onLoadContentFragment(intent, ft)) {
                 ft.commit();
+            } else {
+                Toast.makeText(this, R.string.err_unhandled_intent, Toast.LENGTH_LONG).show();
+                finish();
             }
         }
     }
@@ -90,39 +97,84 @@ public class LocatableItemMapActivity extends FragmentActivity implements Loader
     protected void onResume() {
         super.onResume();
 
-        getSupportLoaderManager().restartLoader(LOCATABLE_LOADER, mLocatableArgs, this);
-
         mImageCache.registerOnImageLoadListener(this);
         mMap.setOnMapUpdateListener(this);
+
+        getSupportLoaderManager().initLoader(LOCATABLE_LOADER, mLocatableArgs, mLoaderCallbacks);
+
+        // File f;
+        // try {
+        // f = new File("/sdcard/loadermanager.dump");
+        // final FileOutputStream fos = new FileOutputStream(f);
+        // final PrintWriter writer = new PrintWriter(fos);
+        // getSupportLoaderManager().dump(TAG, fos.getFD(), writer, new String[] {});
+        // Log.d(TAG, "dumped to " + f.getAbsolutePath());
+        // writer.close();
+        // fos.close();
+        // } catch (final IOException e) {
+        // // TODO Auto-generated catch block
+        // e.printStackTrace();
+        // }
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
+
         mMap.setOnMapUpdateListener(null);
         mImageCache.unregisterOnImageLoadListener(this);
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final Uri locatable = args.getParcelable(ARGS_LOCATABLE);
-        return new CursorLoader(this, locatable, PROJECTION, null, null, null);
+    protected String[] getProjection() {
+        return PROJECTION;
     }
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
-        if (c.moveToFirst()) {
-            final float lat = c.getFloat(c.getColumnIndexOrThrow(Locatable.Columns.COL_LATITUDE));
-            final float lon = c.getFloat(c.getColumnIndexOrThrow(Locatable.Columns.COL_LONGITUDE));
+    protected abstract void onCastLoaded(Loader<Cursor> loader, Cursor c);
 
-            mMap.setMap(lat, lon, false);
+    private final LoaderCallbacks<Cursor> mLoaderCallbacks = new LoaderCallbacks<Cursor>() {
 
-        } else {
-            finish();
-            return;
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            switch (id) {
+                case LOCATABLE_LOADER:
+                    final Uri locatable = args.getParcelable(ARGS_LOCATABLE);
+                    return new CursorLoader(LocatableItemMapActivity.this, locatable,
+                            getProjection(), null, null, null);
+                default:
+                    throw new IllegalArgumentException("invalid loader id");
+            }
         }
-    }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
+            switch (loader.getId()) {
+                case LOCATABLE_LOADER:
+
+                    if (c.moveToFirst()) {
+                        final float lat = c.getFloat(c
+                                .getColumnIndexOrThrow(Locatable.Columns.COL_LATITUDE));
+                        final float lon = c.getFloat(c
+                                .getColumnIndexOrThrow(Locatable.Columns.COL_LONGITUDE));
+
+                        mMap.setMap(lat, lon, false);
+
+                        onCastLoaded(loader, c);
+
+                    } else {
+                        finish();
+                        return;
+                    }
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+
+        }
+
+    };
 
     @Override
     public void onMapUpdate(GoogleStaticMapView view, Uri mapUrl) {
@@ -140,11 +192,6 @@ public class LocatableItemMapActivity extends FragmentActivity implements Loader
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
-
-    @Override
     public void onImageLoaded(long id, Uri imageUri, Drawable image) {
         if (R.id.map == id) {
             mMapFrame.setVisibility(View.VISIBLE);
@@ -152,6 +199,5 @@ public class LocatableItemMapActivity extends FragmentActivity implements Loader
             mMap.setImageDrawable(image);
         }
     }
-
 
 }

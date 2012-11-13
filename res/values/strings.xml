@@ -9,5 +9,11 @@
     <string name="untitled"><i>untitled</i></string>
     <string name="main_tab_whats_new">What\'s new</string>
     <string name="main_tab_collections">Collections</string>
+    <string name="err_unhandled_intent">Error: cannot handle this type of data</string>
+    <string name="edit">Edit</string>
+    <string name="done">Done</string>
+    <string name="edit_cast">Edit cast</string>
+    <string name="err_saving_cast">Error saving cast.</string>
+    <string name="notice_saved">Saved.</string>
 
 </resources>

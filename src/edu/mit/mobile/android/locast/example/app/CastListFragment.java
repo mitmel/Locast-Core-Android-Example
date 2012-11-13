@@ -154,5 +154,4 @@ public class CastListFragment extends ListFragment implements LoaderCallbacks<Cu
             startActivity(new Intent(Intent.ACTION_VIEW, item));
         }
     }
-
 }
