@@ -1,7 +1,11 @@
 package edu.mit.mobile.android.locast.example.app;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -11,11 +15,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Gallery;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 import edu.mit.mobile.android.content.ProviderUtils;
 import edu.mit.mobile.android.imagecache.ImageCache;
 import edu.mit.mobile.android.imagecache.ImageLoaderAdapter;
 import edu.mit.mobile.android.locast.Constants;
+import edu.mit.mobile.android.locast.data.CastMedia;
 import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.sync.LocastSyncService;
@@ -33,6 +42,7 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
 
     private Gallery mCastMediaView;
     private CastMediaAdapter mCastMediaAdapter;
+    private Uri mCastMedia;
 
     protected abstract String[] getCastProjection();
 
@@ -68,11 +78,13 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCastMediaView = (Gallery) view.findViewById(R.id.cast_media);
+        mCastMediaView.setOnItemClickListener(mOnItemClickListener);
 
         mCastMediaAdapter = new CastMediaAdapter(getActivity(), null, 0);
 
         mCastMediaView.setAdapter(new ImageLoaderAdapter(mCastMediaAdapter, mImageCache,
                 CastMediaAdapter.IMAGE_IDS, 300, 300));
+
     }
 
     @Override
@@ -108,6 +120,7 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
 
             case LOADER_CAST_MEDIA:
                 final Uri cast_media = args.getParcelable(ARG_CAST_MEDIA_URI);
+                mCastMedia = cast_media;
                 return new CursorLoader(getActivity(), cast_media, CastMediaAdapter.PROJECTION,
                         null, null, null);
             default:
@@ -115,6 +128,59 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
         }
     }
 
+    private final OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            new ResolveIntentTask(getActivity(), mCastMedia,
+                    (ProgressBar) view.findViewById(R.id.progress))
+                    .execute((Cursor) mCastMediaAdapter.getItem(position));
+        }
+    };
+
+    /**
+     * Makes a few attempts to resolve the media and runs startActivity if it finds something.
+     *
+     */
+    private static class ResolveIntentTask extends AsyncTask<Cursor, Void, Intent> {
+
+        private Activity mContext;
+        private final Uri mCastMediaDir;
+        private ProgressBar mProgress;
+
+        public ResolveIntentTask(Activity context, Uri castMediaDir, ProgressBar progress) {
+            mCastMediaDir = castMediaDir;
+            mContext = context;
+            mProgress = progress;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            mProgress.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Intent doInBackground(Cursor... params) {
+            final Intent showMedia = CastMedia.showMedia(mContext, params[0], mCastMediaDir);
+            return showMedia;
+        }
+
+        @Override
+        protected void onPostExecute(Intent result) {
+            mProgress.setVisibility(View.GONE);
+            mProgress = null;
+            try {
+                if (result == null) {
+                    throw new ActivityNotFoundException();
+                }
+                mContext.startActivity(result);
+            } catch (final ActivityNotFoundException e) {
+                Toast.makeText(mContext, R.string.err_cast_media_no_activities, Toast.LENGTH_LONG)
+                        .show();
+            }
+            mContext = null;
+        }
+    }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor c) {

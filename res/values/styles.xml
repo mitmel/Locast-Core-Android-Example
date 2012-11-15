@@ -27,6 +27,11 @@
 
     <style name="Cast.Media"></style>
     
+    <style name="Cast.Media.Thumbnail">
+        <item name="android:cropToPadding">true</item>
+        <item name="android:scaleType">centerCrop</item>
+    </style>
+
     <style name="Cast.Media.Title"></style>
 
     <!-- styles specific to ListItems -->
@@ -48,8 +53,10 @@
 
     <style name="Cast.Media.Detail"></style>
     
-    <style name="Cast.Media.Title.Detail" >
-                <item name="android:padding">10sp</item>
+    <style name="Cast.Media.Thumbnail.Detail"></style>
+
+    <style name="Cast.Media.Title.Detail">
+        <item name="android:padding">10sp</item>
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
     </style>
 

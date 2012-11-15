@@ -18,5 +18,6 @@
     <string name="new_photo">Take photo</string>
     <string name="new_video">Record video</string>
     <string name="pick_media">Pick media</string>
+    <string name="err_cast_media_no_activities">Unfortunately, there doesn\'t seem to be a way to play this media on your device.</string>
 
 </resources>

@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_width="@dimen/cast_media_item_width"
+    android:layout_height="@dimen/cast_media_item_height" >
 
     <ImageView
         android:id="@+id/thumbnail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        style="@style/Cast.Media.Detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:contentDescription="@null"
         android:src="@drawable/ic_placeholder" />
+
 
     <TextView
         android:id="@+id/title"
         style="@style/Cast.Media.Title.Detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/untitled" />
+    
+    
+    <ProgressBar
+        android:id="@+id/progress"
+        style="@android:style/Widget.ProgressBar.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/thumbnail"
-        android:layout_alignLeft="@+id/thumbnail"
-        android:layout_alignRight="@+id/thumbnail"
-        android:text="@string/untitled" />
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:indeterminateOnly="true" />
 
 </RelativeLayout>

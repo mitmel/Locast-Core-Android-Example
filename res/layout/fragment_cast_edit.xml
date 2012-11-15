@@ -1,67 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <EditText
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="22dp"
-        android:ems="10"
-        android:hint="@string/titled_title"
-        android:inputType="textCapWords"
-        android:singleLine="true" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content" >
 
-        <requestFocus />
-    </EditText>
+        <EditText
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:ems="10"
+            android:hint="@string/titled_title"
+            android:inputType="textCapWords"
+            android:singleLine="true" >
 
-    <EditText
-        android:id="@+id/description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/title"
-        android:layout_marginTop="26dp"
-        android:ems="10"
-        android:hint="@string/titled_description"
-        android:inputType="textMultiLine" />
+            <requestFocus />
+        </EditText>
 
-    <Gallery
-        android:id="@+id/cast_media"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/description"
-        android:layout_marginTop="30dp" />
+        <EditText
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:ems="10"
+            android:lines="2"
+            android:hint="@string/titled_description"
+            android:inputType="textMultiLine" />
+        
+        <Gallery
+            android:id="@+id/cast_media"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp" />
+    </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/new_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/cast_media"
-        android:layout_centerHorizontal="true"
-        android:src="@android:drawable/ic_menu_camera" />
-
-    <ImageButton
-        android:id="@+id/pick_media"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/new_photo"
-        android:layout_toRightOf="@+id/new_photo"
-        android:src="@android:drawable/ic_menu_gallery" />
-
-    <ImageButton
-        android:id="@+id/new_video"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/new_photo"
-        android:layout_toLeftOf="@+id/new_photo"
-        android:src="@android:drawable/btn_star" />
-
-</RelativeLayout>
+</ScrollView>
