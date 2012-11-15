@@ -2,6 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/new_photo"
+        android:icon="@android:drawable/ic_menu_camera"
+        android:showAsAction="ifRoom"
+        android:title="@string/new_photo"/>
+    <item
+        android:id="@+id/new_video"
+        android:icon="@drawable/ic_menu_video"
+        android:showAsAction="ifRoom"
+        android:title="@string/new_video"/>
+    <item
+        android:id="@+id/pick_media"
+        android:icon="@android:drawable/ic_menu_gallery"
+        android:showAsAction="ifRoom"
+        android:title="@string/pick_media"/>
+    <item
         android:id="@+id/cancel"
         android:icon="@drawable/abs__ic_clear"
         android:showAsAction="ifRoom"

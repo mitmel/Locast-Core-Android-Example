@@ -2,6 +2,7 @@ package edu.mit.mobile.android.locast.example.app;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.Loader;
@@ -59,19 +60,12 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
     }
 
     private void editCast() {
-        final FragmentManager fm = getSupportFragmentManager();
-        final FragmentTransaction ft = fm.beginTransaction();
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        onLoadContentFragment(new Intent(Intent.ACTION_EDIT, getIntent().getData()), ft);
-        final ActionMode am = startActionMode(new CastEditActionMode());
-        am.setTitle(R.string.edit_cast);
-        ft.commit();
+        loadContentFragment(new Intent(Intent.ACTION_EDIT, getIntent().getData()));
     }
 
     private void onLeaveCastEdit(boolean save) {
         final FragmentManager fm = getSupportFragmentManager();
-        final FragmentTransaction ft = fm.beginTransaction();
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+
         final CastEditFragment edit = (CastEditFragment) fm.findFragmentByTag(TAG_EDIT);
         if (edit != null) {
             if (save) {
@@ -84,9 +78,7 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
             }
         }
 
-        onLoadContentFragment(new Intent(Intent.ACTION_VIEW, getIntent().getData()), ft);
-        ft.commit();
-
+        loadContentFragment(new Intent(Intent.ACTION_VIEW, getIntent().getData()));
     }
 
     @Override
@@ -107,23 +99,23 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
         }
     }
 
-    private void showEditFragment(Intent intent, FragmentTransaction ft) {
-        ft.replace(R.id.content, CastEditFragment.getInstance(intent.getData()), TAG_EDIT);
-    }
-
-    private void showDetailsFragment(Intent intent, FragmentTransaction ft) {
-        ft.replace(R.id.content, CastDetailFragment.getInstance(intent.getData()), TAG_DETAIL);
-    }
-
     @Override
-    protected boolean onLoadContentFragment(Intent intent, FragmentTransaction ft) {
+    protected boolean onLoadContentFragment(Intent intent, FragmentManager fm,
+            FragmentTransaction ft, Fragment current) {
 
         if (intent.getAction().equals(Intent.ACTION_VIEW)) {
-            showDetailsFragment(intent, ft);
+            if (current == null || !(current instanceof CastDetailFragment)) {
+                ft.replace(R.id.content, CastDetailFragment.getInstance(intent.getData()),
+                        TAG_DETAIL);
+            }
             return true;
 
         } else if (intent.getAction().equals(Intent.ACTION_EDIT)) {
-            showEditFragment(intent, ft);
+            if (current == null || !(current instanceof CastEditFragment)) {
+                ft.replace(R.id.content, CastEditFragment.getInstance(intent.getData()), TAG_EDIT);
+            }
+            final ActionMode am = startActionMode(new CastEditActionMode());
+            am.setTitle(R.string.edit_cast);
             return true;
         } else {
             return false;

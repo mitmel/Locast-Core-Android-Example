@@ -45,9 +45,9 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
     private static final String TAG = LocatableItemMapActivity.class.getSimpleName();
 
     @Override
-    protected void onCreate(Bundle arg0) {
+    protected void onCreate(Bundle args) {
 
-        super.onCreate(arg0);
+        super.onCreate(args);
 
         setContentView(R.layout.activity_locatable_item_map);
 
@@ -74,9 +74,9 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
         mImageCache = ImageCache.getInstance(this);
     }
 
-    protected abstract boolean onLoadContentFragment(Intent intent, FragmentTransaction ft);
+    protected abstract boolean onLoadContentFragment(Intent intent, FragmentManager fm, FragmentTransaction ft, Fragment current);
 
-    private void loadContentFragment(Intent intent) {
+    protected void loadContentFragment(Intent intent) {
         final FragmentManager fm = getSupportFragmentManager();
 
         final String data = intent.getDataString() + intent.getAction();
@@ -84,13 +84,14 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
 
         if (f == null) {
             final FragmentTransaction ft = fm.beginTransaction();
-            if (onLoadContentFragment(intent, ft)) {
+            if (onLoadContentFragment(intent, fm, ft, fm.findFragmentById(R.id.content))) {
                 ft.commit();
             } else {
                 Toast.makeText(this, R.string.err_unhandled_intent, Toast.LENGTH_LONG).show();
                 finish();
             }
         }
+        setIntent(intent);
     }
 
     @Override
@@ -100,21 +101,7 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
         mImageCache.registerOnImageLoadListener(this);
         mMap.setOnMapUpdateListener(this);
 
-        getSupportLoaderManager().initLoader(LOCATABLE_LOADER, mLocatableArgs, mLoaderCallbacks);
-
-        // File f;
-        // try {
-        // f = new File("/sdcard/loadermanager.dump");
-        // final FileOutputStream fos = new FileOutputStream(f);
-        // final PrintWriter writer = new PrintWriter(fos);
-        // getSupportLoaderManager().dump(TAG, fos.getFD(), writer, new String[] {});
-        // Log.d(TAG, "dumped to " + f.getAbsolutePath());
-        // writer.close();
-        // fos.close();
-        // } catch (final IOException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // }
+        getSupportLoaderManager().restartLoader(LOCATABLE_LOADER, mLocatableArgs, mLoaderCallbacks);
 
     }
 

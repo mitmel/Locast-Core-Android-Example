@@ -18,8 +18,13 @@ public class CastEditFragment extends CastFragment {
             Cast.COL_DESCRIPTION, Cast.COL_AUTHOR_URI, Cast.COL_PRIVACY, Cast.COL_DRAFT,
             Cast.COL_LATITUDE, Cast.COL_LONGITUDE, Cast.COL_AUTHOR };
 
+    private static final String INSTANCE_IS_LOADED = "edu.mit.mobile.android.locast.example.CastEditFragment.CAST_IS_LOADED";
+
     private TextView mTitle;
     private TextView mDescription;
+
+    // this is recorded so that we only call loadCastFromCursor once.
+    private boolean mIsLoaded = false;
 
     public static CastEditFragment getInstance(Uri cast) {
         final Bundle args = new Bundle();
@@ -33,6 +38,17 @@ public class CastEditFragment extends CastFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mIsLoaded = savedInstanceState.getBoolean(INSTANCE_IS_LOADED, false);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean(INSTANCE_IS_LOADED, mIsLoaded);
     }
 
     @Override
@@ -56,8 +72,11 @@ public class CastEditFragment extends CastFragment {
 
     @Override
     protected void loadCastFromCursor(Loader<Cursor> loader, Cursor c) {
-        mTitle.setText(c.getString(c.getColumnIndexOrThrow(Cast.COL_TITLE)));
-        mDescription.setText(c.getString(c.getColumnIndexOrThrow(Cast.COL_DESCRIPTION)));
+        if (!mIsLoaded) {
+            mTitle.setText(c.getString(c.getColumnIndexOrThrow(Cast.COL_TITLE)));
+            mDescription.setText(c.getString(c.getColumnIndexOrThrow(Cast.COL_DESCRIPTION)));
+            mIsLoaded = true;
+        }
     }
 
     public boolean save() {

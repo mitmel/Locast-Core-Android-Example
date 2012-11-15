@@ -64,7 +64,9 @@ android:value="" />
         </activity>
 
         <!-- casts -->
-        <activity android:name=".app.CastViewEditActivity" >
+        <activity
+            android:name=".app.CastViewEditActivity"
+            android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

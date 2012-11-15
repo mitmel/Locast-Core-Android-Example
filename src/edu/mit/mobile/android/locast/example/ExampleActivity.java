@@ -138,15 +138,18 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
 
         final String tag = (String) tab.getTag();
 
+        // first remove anything that's not what we want
         if (f != null && !tag.equals(f.getTag())) {
-                ft.detach(f);
+            ft.detach(f);
             f = null;
         }
 
+        // search to see if there's one stashed away
         if (f == null) {
             f = fm.findFragmentByTag(tag);
         }
 
+        // and reattach / create anything
         if (f != null) {
             ft.attach(f);
         } else {
