@@ -27,7 +27,7 @@ public class CastMedia extends VideoContent {
 
     public static final ItemSyncMap SYNC_MAP = new ItemSyncMap();
 
-    public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.cast.#.media";
+    public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.castmedia";
 
     public static class ItemSyncMap extends VideoContent.ItemSyncMap {
         /**
