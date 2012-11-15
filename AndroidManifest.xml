@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="16" />
+        android:targetSdkVersion="17" />
 
     <!-- for sensing location -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -32,6 +32,8 @@
 
     <!-- to show more useful error messages if there's a loss of connectivity -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-feature android:name="android.hardware.camera" />
 
     <application
         android:name="edu.mit.mobile.android.locast.app.LocastApplication"
