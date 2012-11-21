@@ -31,7 +31,9 @@ import edu.mit.mobile.android.locast.sync.LocastSyncService;
 
 public abstract class CastFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
+    public static final String ARG_INTENT_ACTION = "action";
     public static final String ARG_CAST_URI = "cast";
+    public static final String ARG_CAST_DIR_URI = "cast_dir";
     public static final String ARG_CAST_MEDIA_URI = "cast_media";
     private static final int LOADER_CAST = 1000;
 
@@ -51,7 +53,8 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
         super.onCreate(savedInstanceState);
 
         final Bundle args = getArguments();
-        if (args == null || !args.containsKey(ARG_CAST_URI)) {
+        if (args == null
+                || (!args.containsKey(ARG_CAST_URI) && !args.containsKey(ARG_CAST_DIR_URI))) {
             throw new IllegalArgumentException("fragment requires a cast URI as an argument");
         }
 
@@ -82,27 +85,35 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
 
         mCastMediaAdapter = new CastMediaAdapter(getActivity(), null, 0);
 
+        mCastMediaView.setEmptyView(view.findViewById(android.R.id.empty));
+
         mCastMediaView.setAdapter(new ImageLoaderAdapter(mCastMediaAdapter, mImageCache,
                 CastMediaAdapter.IMAGE_IDS, 300, 300));
 
+    }
+
+    protected void restartLoaders() {
+        final Bundle loaderArgs = new Bundle(getArguments());
+        final Uri castUri = loaderArgs.getParcelable(ARG_CAST_URI);
+
+        if (castUri != null) {
+
+            final Uri castMedia = Cast.CAST_MEDIA.getUri(castUri);
+            loaderArgs.putParcelable(ARG_CAST_MEDIA_URI, castMedia);
+
+            getLoaderManager().restartLoader(LOADER_CAST, loaderArgs, this);
+
+            getLoaderManager().restartLoader(LOADER_CAST_MEDIA, loaderArgs, this);
+
+            LocastSyncService.startExpeditedAutomaticSync(getActivity(), castUri);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        final Bundle loaderArgs = new Bundle(getArguments());
-        final Uri castUri = loaderArgs.getParcelable(ARG_CAST_URI);
-
-        final Uri castMedia = Cast.CAST_MEDIA.getUri(castUri);
-        loaderArgs.putParcelable(ARG_CAST_MEDIA_URI, castMedia);
-
-        getLoaderManager().restartLoader(LOADER_CAST, loaderArgs, this);
-
-        getLoaderManager().restartLoader(LOADER_CAST_MEDIA, loaderArgs, this);
-
-        LocastSyncService.startExpeditedAutomaticSync(getActivity(), castUri);
-        LocastSyncService.startExpeditedAutomaticSync(getActivity(), castMedia);
+        restartLoaders();
     }
 
     protected abstract void loadCastFromCursor(Loader<Cursor> loader, Cursor c);

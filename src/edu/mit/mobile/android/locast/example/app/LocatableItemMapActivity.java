@@ -188,7 +188,7 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
         return mIsDraft;
     }
 
-    public void setIsDraft(boolean isDraft) {
+    public void setDraft(boolean isDraft) {
         mIsDraft = isDraft;
     }
 
@@ -242,7 +242,7 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
                             mMap.setMap(lat, lon, false);
                         }
 
-                        setIsDraft(JsonSyncableItem.isDraft(c));
+                        setDraft(JsonSyncableItem.isDraft(c));
 
                         onCastLoaded(loader, c);
 

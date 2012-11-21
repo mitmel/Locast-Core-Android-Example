@@ -31,6 +31,11 @@
         <item name="android:cropToPadding">true</item>
         <item name="android:scaleType">centerCrop</item>
     </style>
+    
+    <style name="Cast.Media.Empty">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:gravity">center</item>
+    </style>
 
     <style name="Cast.Media.Title"></style>
 

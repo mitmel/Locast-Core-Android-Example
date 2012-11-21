@@ -19,5 +19,9 @@
     <string name="new_video">Record video</string>
     <string name="pick_media">Pick media</string>
     <string name="err_cast_media_no_activities">Unfortunately, there doesn\'t seem to be a way to play this media on your device.</string>
+    <string name="cast_new">New cast</string>
+    <string name="err_validate_please_enter_a_title">Please enter a title.</string>
+    <string name="this_cast_has_no_media">This cast has no media</string>
+    <string name="publish">Publish</string>
 
 </resources>

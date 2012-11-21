@@ -73,6 +73,7 @@ public class Collection extends JsonSyncableItem implements Favoritable.Columns,
     public static final ItemSyncMap SYNC_MAP = new ItemSyncMap();
 
     public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.collection";
+    public static final String TYPE_ITEM = "vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.collection";
 
     public static class ItemSyncMap extends JsonSyncableItem.ItemSyncMap {
         /**

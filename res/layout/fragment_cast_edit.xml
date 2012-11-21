@@ -6,13 +6,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:padding="@dimen/padding_medium" >
 
         <EditText
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="10dp"
             android:ems="10"
             android:hint="@string/titled_title"
             android:inputType="textCapWords"
@@ -25,15 +26,22 @@
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="10dp"
             android:ems="10"
             android:hint="@string/titled_description"
             android:inputType="textMultiLine"
-            android:lines="2" />
+            android:minLines="2" />
+
+        <TextView
+            android:id="@android:id/empty"
+            style="@style/Cast.Media.Empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/this_cast_has_no_media" />
 
         <Gallery
             android:id="@+id/cast_media"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp" />
     </LinearLayout>

@@ -1,6 +1,7 @@
 package edu.mit.mobile.android.locast.example.app;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.example.accounts.AuthenticationService;
+import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
 
 public class CastEditFragment extends CastFragment {
@@ -19,16 +22,35 @@ public class CastEditFragment extends CastFragment {
             Cast.COL_LATITUDE, Cast.COL_LONGITUDE, Cast.COL_AUTHOR };
 
     private static final String INSTANCE_IS_LOADED = "edu.mit.mobile.android.locast.example.CastEditFragment.CAST_IS_LOADED";
+    private static final String INSTANCE_IS_DRAFT = "edu.mit.mobile.android.locast.example.CastEditFragment.IS_DRAFT";
 
     private TextView mTitle;
     private TextView mDescription;
 
-    // this is recorded so that we only call loadCastFromCursor once.
-    private boolean mIsLoaded = false;
+    // stateful
 
-    public static CastEditFragment getInstance(Uri cast) {
-        final Bundle args = new Bundle();
-        args.putParcelable(ARG_CAST_URI, cast);
+    // this is recorded so that we only call loadCastFromCursor once.
+    private boolean mIsLoaded;
+
+    private boolean mIsDraft;
+
+    /**
+     * @param action
+     *            {@link Intent#ACTION_EDIT} or {@link Intent#ACTION_INSERT}
+     * @param cast
+     *            a cast item or cast dir, respectively
+     * @return
+     */
+    public static CastEditFragment getInstance(String action, Uri cast) {
+        final Bundle args = new Bundle(2);
+        if (Intent.ACTION_INSERT.equals(action)) {
+            args.putParcelable(ARG_CAST_DIR_URI, cast);
+
+        } else if (Intent.ACTION_EDIT.equals(action)) {
+            args.putParcelable(ARG_CAST_URI, cast);
+        }
+
+        args.putString(ARG_INTENT_ACTION, action);
 
         final CastEditFragment f = new CastEditFragment();
         f.setArguments(args);
@@ -39,9 +61,12 @@ public class CastEditFragment extends CastFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null) {
-            mIsLoaded = savedInstanceState.getBoolean(INSTANCE_IS_LOADED, false);
+        if (savedInstanceState == null) {
+            savedInstanceState = Bundle.EMPTY;
         }
+
+        mIsLoaded = savedInstanceState.getBoolean(INSTANCE_IS_LOADED, false);
+        mIsDraft = savedInstanceState.getBoolean(INSTANCE_IS_DRAFT, true);
     }
 
     @Override
@@ -49,6 +74,7 @@ public class CastEditFragment extends CastFragment {
         super.onSaveInstanceState(outState);
 
         outState.putBoolean(INSTANCE_IS_LOADED, mIsLoaded);
+        outState.putBoolean(INSTANCE_IS_DRAFT, mIsDraft);
     }
 
     @Override
@@ -79,14 +105,74 @@ public class CastEditFragment extends CastFragment {
         }
     }
 
+    public Uri getCast() {
+        return getArguments().getParcelable(ARG_CAST_URI);
+    }
+
+    public boolean validate() {
+
+        // title is required
+        if (mTitle.getText().toString().trim().length() == 0) {
+            mTitle.setError(getActivity().getString(R.string.err_validate_please_enter_a_title));
+            mTitle.requestFocus();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Validates and marks the cast not a draft if it succeeds. You must then call {@link #save()}.
+     *
+     * @return true if publishing succeeds
+     */
+    public boolean validateAndClearDraft() {
+        if (!validate()) {
+            return false;
+        }
+
+        mIsDraft = false;
+
+        return true;
+    }
+
+    /**
+     * Saves the state of the fragment to the database. If this is creating new content, the URI can
+     * be retrieved with {@link #getCast()}.
+     *
+     * @return true if the save succeeded.
+     */
     public boolean save() {
-        final Uri cast = getArguments().getParcelable(ARG_CAST_URI);
+        final Bundle args = getArguments();
+        Uri cast = args.getParcelable(ARG_CAST_URI);
+        final String action = args.getString(ARG_INTENT_ACTION);
 
         final ContentValues cv = new ContentValues();
 
         cv.put(Cast.COL_TITLE, mTitle.getText().toString());
         cv.put(Cast.COL_DESCRIPTION, mDescription.getText().toString());
 
-        return getActivity().getContentResolver().update(cast, cv, null, null) == 1;
+        cv.put(Cast.COL_DRAFT, mIsDraft);
+
+        if (Intent.ACTION_INSERT.equals(action)) {
+            cv.put(Cast.COL_AUTHOR_URI,
+                    Authenticator.getUserUri(getActivity(), Authenticator.ACCOUNT_TYPE));
+
+            cv.put(Cast.COL_AUTHOR, Authenticator.getUserData(getActivity(),
+                    Authenticator.ACCOUNT_TYPE, AuthenticationService.USERDATA_DISPLAY_NAME));
+
+            final Uri castDir = args.getParcelable(ARG_CAST_DIR_URI);
+            cast = getActivity().getContentResolver().insert(castDir, cv);
+            if (cast != null) {
+                args.putParcelable(ARG_CAST_URI, cast);
+            }
+            return cast != null;
+
+        } else if (Intent.ACTION_EDIT.equals(action)) {
+            return getActivity().getContentResolver().update(cast, cv, null, null) == 1;
+
+        } else {
+            return false;
+        }
     }
 }

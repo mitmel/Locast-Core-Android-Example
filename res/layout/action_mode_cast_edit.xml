@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@android:id/title"
+        style="@style/TextAppearance.Sherlock.Widget.ActionMode.Title"
+        android:layout_width="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/publish"
+        
+        android:layout_height="match_parent" />
+
+    <!-- the textAppearance below doesn't seem to be working, so some styles are duplicated here. Ugly. -->
+
+    <com.actionbarsherlock.internal.widget.CapitalizingButton
+        android:id="@+id/publish"
+        style="@style/Widget.Sherlock.ActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/actionBarItemBackground"
+        android:drawableLeft="@android:drawable/ic_menu_send"
+        android:text="@string/publish"
+        android:layout_alignParentRight="true"
+        android:textAllCaps="true"
+        android:textAppearance="?attr/actionMenuTextAppearance"
+        android:textColor="@color/abs__primary_text_holo_dark"
+        android:textSize="12sp" />
+
+</RelativeLayout>
