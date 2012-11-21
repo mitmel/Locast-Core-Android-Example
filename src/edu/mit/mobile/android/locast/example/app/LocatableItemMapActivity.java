@@ -21,10 +21,12 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
+import edu.mit.mobile.android.content.ProviderUtils;
 import edu.mit.mobile.android.imagecache.ImageCache;
 import edu.mit.mobile.android.imagecache.ImageCache.OnImageLoadListener;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.Locatable;
+import edu.mit.mobile.android.locast.example.BuildConfig;
 import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.maps.GoogleStaticMapView;
 import edu.mit.mobile.android.maps.OnMapUpdateListener;
@@ -49,6 +51,7 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
     private static final String TAG = LocatableItemMapActivity.class.getSimpleName();
 
     private static final String INSTANCE_SHOW_MAP = "edu.mit.mobile.android.locast.example.app.LocatableItemMapActivity.SHOW_MAP";
+    private static final String INSTANCE_LOCATABLE_ARGS = "edu.mit.mobile.android.locast.example.app.LocatableItemMapActivity.LOCATABLE_ARGS";
 
     @Override
     protected void onCreate(Bundle args) {
@@ -65,8 +68,9 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
 
         LoaderManager.enableDebugLogging(true);
 
-        final Uri data = getIntent().getData();
-        final String action = getIntent().getAction();
+        final Intent intent = getIntent();
+        final Uri data = intent.getData();
+        final String action = intent.getAction();
 
         if (args == null) {
             args = Bundle.EMPTY;
@@ -74,16 +78,42 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
 
         mShowMap = args.getBoolean(INSTANCE_SHOW_MAP, true);
 
-        mLocatableArgs = new Bundle(1);
+        mLocatableArgs = args.getParcelable(INSTANCE_LOCATABLE_ARGS);
+        if (mLocatableArgs == null) {
+            mLocatableArgs = new Bundle(1);
+        }
 
         if (Intent.ACTION_INSERT.equals(action)) {
             // we don't have a locatable yet. That's ok.
         } else {
-            mLocatableArgs.putParcelable(ARGS_LOCATABLE, data);
+            if (!mLocatableArgs.containsKey(ARGS_LOCATABLE)) {
+                mLocatableArgs.putParcelable(ARGS_LOCATABLE, data);
+            }
         }
+
+        setDraft(true);
 
         if (!loadContentFragment(getIntent())) {
             return;
+        }
+    }
+
+    @Override
+    public void setIntent(Intent newIntent) {
+        super.setIntent(newIntent);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "setIntent(" + newIntent + ")");
+        }
+
+        final String type = newIntent.getType();
+
+        if (type != null && type.startsWith(ProviderUtils.TYPE_ITEM_PREFIX)) {
+            final Uri locatable = getLocatable();
+            final Uri newLocatable = newIntent.getData();
+
+            if (newLocatable != null && !newLocatable.equals(locatable)) {
+                setLocatable(newLocatable);
+            }
         }
     }
 
@@ -146,6 +176,7 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        outState.putParcelable(INSTANCE_LOCATABLE_ARGS, mLocatableArgs);
         outState.putBoolean(INSTANCE_SHOW_MAP, mShowMap);
     }
 
@@ -172,7 +203,7 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
     }
 
     protected void restartLoaders() {
-        if (mLocatableArgs.containsKey(ARGS_LOCATABLE)) {
+        if (getLocatable() != null) {
             getSupportLoaderManager().restartLoader(LOCATABLE_LOADER, mLocatableArgs,
                     mLoaderCallbacks);
         } else {
@@ -207,6 +238,11 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
         restartLoaders();
     }
 
+    public Uri getLocatable() {
+        final Uri locatable = mLocatableArgs.getParcelable(ARGS_LOCATABLE);
+        return locatable;
+    }
+
     protected String[] getProjection() {
         return PROJECTION;
     }
@@ -220,6 +256,10 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
             switch (id) {
                 case LOCATABLE_LOADER:
                     final Uri locatable = args.getParcelable(ARGS_LOCATABLE);
+                    if (locatable == null) {
+                        throw new IllegalArgumentException("locatable was null");
+                    }
+
                     return new CursorLoader(LocatableItemMapActivity.this, locatable,
                             getProjection(), null, null, null);
                 default:

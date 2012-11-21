@@ -19,6 +19,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.stackoverflow.ArrayUtils;
 
 import edu.mit.mobile.android.locast.data.PrivatelyAuthorable;
+import edu.mit.mobile.android.locast.example.BuildConfig;
 import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
@@ -39,6 +40,7 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
 
     private CastEditActionMode mCastEditActionMode;
 
+
     private static String[] PROJECTION = new String[] { Cast.COL_PRIVACY, Cast.COL_TITLE,
             Cast.COL_AUTHOR_URI, Cast.COL_AUTHOR };
 
@@ -53,8 +55,6 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
     @Override
     protected void onCreate(Bundle args) {
         super.onCreate(args);
-
-
 
         mCastMediaHelper = new CastMediaHelper(this, args);
     }
@@ -90,20 +90,14 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
     }
 
     private void editCast() {
-        loadContentFragment(new Intent(Intent.ACTION_EDIT, getIntent().getData()));
+        loadContentFragment(new Intent(Intent.ACTION_EDIT, getCast()));
     }
 
     /**
      * @return the working cast, or null if it's currently being created.
      */
     private Uri getCast() {
-        Uri cast = null;
-        // only set the cast when it's actually a cast item.
-        if (Cast.TYPE_ITEM.equals(getIntent().resolveType(getContentResolver()))) {
-            cast = getIntent().getData();
-        }
-
-        return cast;
+        return getLocatable();
     }
 
     private void onLeaveCastEdit(boolean save) {
@@ -115,9 +109,11 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
             return;
         }
 
+        // this should always exist, as we either created it or updated it.
+        final Uri cast = getCast();
+
         if (Intent.ACTION_INSERT.equals(getIntent().getAction())) {
             if (save) {
-                final Uri cast = getCast();
 
                 loadContentFragment(new Intent(Intent.ACTION_VIEW, cast));
 
@@ -129,10 +125,10 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
         } else {
             if (save) {
                 Toast.makeText(this, R.string.notice_saved, Toast.LENGTH_SHORT).show();
-                LocastSyncService.startSync(this, getIntent().getData(), true);
+                LocastSyncService.startSync(this, cast, true);
 
             }
-            loadContentFragment(new Intent(Intent.ACTION_VIEW, getIntent().getData()));
+            loadContentFragment(new Intent(Intent.ACTION_VIEW, cast));
         }
     }
 
@@ -171,7 +167,7 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
         final Uri newCast = edit.getCast();
 
         if (!newCast.equals(cast)) {
-            setIntent(new Intent(Intent.ACTION_EDIT, newCast));
+            setLocatable(newCast);
         }
 
         return true;
@@ -208,6 +204,9 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
     protected boolean onLoadContentFragment(Intent intent, FragmentManager fm,
             FragmentTransaction ft, Fragment current) {
         final String action = intent.getAction();
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "onLoadContentFragment(" + intent + ", " + current + ")");
+        }
         if (Intent.ACTION_VIEW.equals(action)) {
             if (current == null || !(current instanceof CastDetailFragment)) {
                 ft.replace(R.id.content, CastDetailFragment.getInstance(intent.getData()),

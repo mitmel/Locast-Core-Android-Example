@@ -6,10 +6,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import edu.mit.mobile.android.locast.example.BuildConfig;
 import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.locast.example.accounts.AuthenticationService;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
@@ -23,6 +25,8 @@ public class CastEditFragment extends CastFragment {
 
     private static final String INSTANCE_IS_LOADED = "edu.mit.mobile.android.locast.example.CastEditFragment.CAST_IS_LOADED";
     private static final String INSTANCE_IS_DRAFT = "edu.mit.mobile.android.locast.example.CastEditFragment.IS_DRAFT";
+
+    private static final String TAG = CastEditFragment.class.getSimpleName();
 
     private TextView mTitle;
     private TextView mDescription;
@@ -145,7 +149,10 @@ public class CastEditFragment extends CastFragment {
     public boolean save() {
         final Bundle args = getArguments();
         Uri cast = args.getParcelable(ARG_CAST_URI);
-        final String action = args.getString(ARG_INTENT_ACTION);
+
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "save() called with arguments " + args);
+        }
 
         final ContentValues cv = new ContentValues();
 
@@ -154,7 +161,7 @@ public class CastEditFragment extends CastFragment {
 
         cv.put(Cast.COL_DRAFT, mIsDraft);
 
-        if (Intent.ACTION_INSERT.equals(action)) {
+        if (cast == null) {
             cv.put(Cast.COL_AUTHOR_URI,
                     Authenticator.getUserUri(getActivity(), Authenticator.ACCOUNT_TYPE));
 
@@ -163,16 +170,21 @@ public class CastEditFragment extends CastFragment {
 
             final Uri castDir = args.getParcelable(ARG_CAST_DIR_URI);
             cast = getActivity().getContentResolver().insert(castDir, cv);
+
             if (cast != null) {
                 args.putParcelable(ARG_CAST_URI, cast);
+                if (BuildConfig.DEBUG) {
+                    Log.d(TAG, "Just created " + cast + " from CV " + cv);
+                }
             }
             return cast != null;
 
-        } else if (Intent.ACTION_EDIT.equals(action)) {
+        } else {
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "update cast " + cast + " with cv " + cv);
+            }
             return getActivity().getContentResolver().update(cast, cv, null, null) == 1;
 
-        } else {
-            return false;
         }
     }
 }
