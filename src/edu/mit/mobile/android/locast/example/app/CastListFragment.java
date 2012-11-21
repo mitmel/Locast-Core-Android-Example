@@ -27,7 +27,7 @@ import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.sync.LocastSyncService;
 
 public class CastListFragment extends ListFragment implements LoaderCallbacks<Cursor>,
-        OnItemClickListener {
+        OnItemClickListener, OnRefreshListener {
 
     // public interface
 
@@ -153,5 +153,11 @@ public class CastListFragment extends ListFragment implements LoaderCallbacks<Cu
         } else {
             startActivity(new Intent(Intent.ACTION_VIEW, item));
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        LocastSyncService.startSync(getActivity(), mCasts, true);
+
     }
 }

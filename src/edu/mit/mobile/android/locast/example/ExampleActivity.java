@@ -16,6 +16,7 @@ import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.app.CastListFragment;
 import edu.mit.mobile.android.locast.example.app.CollectionListFragment;
 import edu.mit.mobile.android.locast.example.app.NoAccountFragment;
+import edu.mit.mobile.android.locast.example.app.OnRefreshListener;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.example.data.Collection;
 
@@ -201,7 +202,12 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
 
     @Override
     public void onTabReselected(Tab tab, FragmentTransaction ft) {
-
+        final FragmentManager fm = getSupportFragmentManager();
+        final String tag = (String) tab.getTag();
+        final Fragment f = fm.findFragmentByTag(tag);
+        if (f != null && f instanceof OnRefreshListener) {
+            ((OnRefreshListener) f).onRefresh();
+        }
     }
 
     @Override
