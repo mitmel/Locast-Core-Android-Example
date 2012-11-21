@@ -23,5 +23,9 @@
     <string name="err_validate_please_enter_a_title">Please enter a title.</string>
     <string name="this_cast_has_no_media">This cast has no media</string>
     <string name="publish">Publish</string>
+    <string name="location_link_no_location">No Location</string>
+    <string name="location_link_location_found">Location found</string>
+    <string name="location_link_accuracy_meter">±%.0f meters</string>
+    <string name="location_link_accuracy_kilometer">±%.01f kilometers</string>
 
 </resources>

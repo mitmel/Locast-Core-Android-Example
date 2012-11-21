@@ -4,10 +4,10 @@
     android:layout_height="match_parent" >
 
     <LinearLayout
+        style="@style/Cast.Item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        style="@style/Cast.Item">
+        android:orientation="vertical" >
 
         <EditText
             android:id="@+id/title"
@@ -40,11 +40,18 @@
             android:text="@string/this_cast_has_no_media" />
 
         <Gallery
-            style="@style/Cast.Media.List"
             android:id="@+id/cast_media"
+            style="@style/Cast.Media.List"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp" />
+
+        <edu.mit.mobile.android.widget.LocationLink
+            android:id="@+id/location"
+            style="@style/LocationLink"
+            android:layout_width="wrap_content"
+            android:minLines="2"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </ScrollView>

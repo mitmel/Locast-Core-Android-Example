@@ -94,5 +94,10 @@
     <style name="Locatable.Map.Frame">
         <item name="android:foreground">@drawable/map_overshadow_pointer</item>
     </style>
+    
+    <style name="LocationLink">
+        <item name="android:drawableLeft">@drawable/ic_location</item>
+        <item name="android:padding">@dimen/padding_medium</item>
+    </style>
 
 </resources>

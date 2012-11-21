@@ -3,6 +3,7 @@ package edu.mit.mobile.android.locast.example.app;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.Loader;
@@ -16,6 +17,8 @@ import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.locast.example.accounts.AuthenticationService;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
+import edu.mit.mobile.android.location.IncrementalLocator;
+import edu.mit.mobile.android.widget.LocationLink;
 
 public class CastEditFragment extends CastFragment {
 
@@ -31,12 +34,22 @@ public class CastEditFragment extends CastFragment {
     private TextView mTitle;
     private TextView mDescription;
 
+    private IncrementalLocator mLocator;
+    private LocationLink mLocLink;
+
+    // these should sync up with the drawable's xml
+    private static final int LEVEL_OFF = 0;
+    private static final int LEVEL_SEARCHING = 1;
+    private static final int LEVEL_FOUND = 2;
+
     // stateful
 
     // this is recorded so that we only call loadCastFromCursor once.
     private boolean mIsLoaded;
 
     private boolean mIsDraft;
+
+    protected Location mLocation;
 
     /**
      * @param action
@@ -64,6 +77,8 @@ public class CastEditFragment extends CastFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mLocator = new IncrementalLocator(getActivity());
 
         if (savedInstanceState == null) {
             savedInstanceState = Bundle.EMPTY;
@@ -93,7 +108,60 @@ public class CastEditFragment extends CastFragment {
 
         mTitle = (TextView) view.findViewById(R.id.title);
         mDescription = (TextView) view.findViewById(R.id.description);
+        mLocLink = (LocationLink) view.findViewById(R.id.location);
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mLocator.removeLocationUpdates(mLocationListener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mLocator.requestLocationUpdates(mLocationListener);
+    }
+
+    private final IncrementalLocator.OnIncrementalLocationListener mLocationListener = new IncrementalLocator.OnIncrementalLocationListener() {
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+
+        }
+
+        @Override
+        public void onIncrementalLocationChanged(int providerType, Location location) {
+            mLocLink.setLocation(location);
+            mLocation = location;
+            switch (providerType) {
+                case IncrementalLocator.PROVIDER_TYPE_LAST_KNOWN:
+                    mLocLink.setDrawableLevel(LEVEL_SEARCHING);
+                    break;
+                case IncrementalLocator.PROVIDER_TYPE_COARSE:
+                case IncrementalLocator.PROVIDER_TYPE_FINE:
+                    mLocLink.setDrawableLevel(LEVEL_FOUND);
+                    break;
+            }
+
+        }
+    };
 
     @Override
     protected String[] getCastProjection() {
@@ -159,6 +227,11 @@ public class CastEditFragment extends CastFragment {
 
         cv.put(Cast.COL_TITLE, mTitle.getText().toString());
         cv.put(Cast.COL_DESCRIPTION, mDescription.getText().toString());
+
+        if (mLocation != null) {
+            cv.put(Cast.COL_LATITUDE, mLocation.getLatitude());
+            cv.put(Cast.COL_LONGITUDE, mLocation.getLongitude());
+        }
 
         cv.put(Cast.COL_DRAFT, mIsDraft);
 
