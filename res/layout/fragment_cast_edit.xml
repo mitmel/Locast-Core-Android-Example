@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/padding_medium" >
+        style="@style/Cast.Item">
 
         <EditText
             android:id="@+id/title"
@@ -40,6 +40,7 @@
             android:text="@string/this_cast_has_no_media" />
 
         <Gallery
+            style="@style/Cast.Media.List"
             android:id="@+id/cast_media"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

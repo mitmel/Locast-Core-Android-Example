@@ -2,8 +2,6 @@ package edu.mit.mobile.android.locast.example.app;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.stackoverflow.ArrayUtils;
 
@@ -33,10 +31,4 @@ public class CastMediaAdapter extends SimpleThumbnailCursorAdapter {
 
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        final View v = super.getView(position, convertView, parent);
-
-        return v;
-    }
 }

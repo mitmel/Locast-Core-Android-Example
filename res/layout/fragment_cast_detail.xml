@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Cast.Detail"
+    style="@style/Cast.Item.Detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <TextView
         android:id="@android:id/empty"
-        style="@style/Cast.Media.Empty"
+        style="@style/Cast.Media.Empty.Detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/this_cast_has_no_media" />
 
     <Gallery
         android:id="@+id/cast_media"
-        style="@style/Cast.Media.Detail"
+        style="@style/Cast.Media.List.Detail"
         android:layout_width="match_parent"
-        android:layout_height="200dip" />
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/description"

@@ -23,18 +23,32 @@
 
     <style name="Cast.Author"></style>
 
-    <style name="Cast.Description"></style>
+    <style name="Cast.Description">
+        <item name="android:padding">10dip</item>
+    </style>
+
+    <style name="Cast.Item"></style>
 
     <style name="Cast.Media"></style>
-    
+
     <style name="Cast.Media.Thumbnail">
         <item name="android:cropToPadding">true</item>
         <item name="android:scaleType">centerCrop</item>
     </style>
-    
+
     <style name="Cast.Media.Empty">
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
         <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Cast.Media.Item">
+        <item name="android:background">@android:drawable/picture_frame</item>
+    </style>
+
+    <style name="Cast.Media.List">
+        <item name="android:spacing">5dp</item>
+        <item name="android:paddingTop">10dip</item>
+        <item name="android:paddingBottom">10dip</item>
     </style>
 
     <style name="Cast.Media.Title"></style>
@@ -50,20 +64,27 @@
 
     <!-- styles specific to the detail view -->
 
-    <style name="Cast.Detail">
-        <item name="android:padding">10dip</item>
-    </style>
+    <style name="Cast.Detail"></style>
+
+    <style name="Cast.Item.Detail"></style>
 
     <style name="Cast.Description.Detail"></style>
 
     <style name="Cast.Media.Detail"></style>
-    
+
     <style name="Cast.Media.Thumbnail.Detail"></style>
 
     <style name="Cast.Media.Title.Detail">
         <item name="android:padding">10sp</item>
+        <item name="android:background">#40ffffff</item>
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
     </style>
+
+    <style name="Cast.Media.Item.Detail"></style>
+
+    <style name="Cast.Media.List.Detail"></style>
+
+    <style name="Cast.Media.Empty.Detail"></style>
 
     <!-- Locatable item map view -->
     <style name="Locatable"></style>
