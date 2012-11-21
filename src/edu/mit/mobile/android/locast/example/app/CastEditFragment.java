@@ -105,6 +105,7 @@ public class CastEditFragment extends CastFragment {
         if (!mIsLoaded) {
             mTitle.setText(c.getString(c.getColumnIndexOrThrow(Cast.COL_TITLE)));
             mDescription.setText(c.getString(c.getColumnIndexOrThrow(Cast.COL_DESCRIPTION)));
+            mIsDraft = Cast.isDraft(c);
             mIsLoaded = true;
         }
     }
