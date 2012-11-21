@@ -3,6 +3,7 @@ package edu.mit.mobile.android.locast.example.data;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import edu.mit.mobile.android.content.DBSortOrder;
 import edu.mit.mobile.android.content.ForeignKeyManager;
 import edu.mit.mobile.android.content.ProviderUtils;
 import edu.mit.mobile.android.content.UriPath;
@@ -17,6 +18,7 @@ import edu.mit.mobile.android.locast.data.Titled;
 import edu.mit.mobile.android.locast.example.R;
 
 @UriPath(Cast.PATH)
+@DBSortOrder(Cast.SORT_ORDER_DEFAULT)
 public class Cast extends JsonSyncableItem implements Titled.Columns, PrivatelyAuthorable.Columns,
         Locatable.Columns, Commentable.Columns {
     public final static String TAG = Cast.class.getSimpleName();
@@ -28,6 +30,8 @@ public class Cast extends JsonSyncableItem implements Titled.Columns, PrivatelyA
     public static final String COL_PREVIEW_IMAGE_URL = "preview_url";
 
     public static final ForeignKeyManager CAST_MEDIA = new ForeignKeyManager(CastMedia.class);
+
+    public static final String SORT_ORDER_DEFAULT = COL_CREATED_DATE + " DESC";
 
     public Cast(Cursor c) {
         super(c);
