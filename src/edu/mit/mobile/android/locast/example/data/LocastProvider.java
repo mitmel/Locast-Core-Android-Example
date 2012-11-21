@@ -11,6 +11,7 @@ import edu.mit.mobile.android.content.m2m.M2MDBHelper;
 import edu.mit.mobile.android.locast.data.JSONSyncableIdenticalChildFinder;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.NoPublicPath;
+import edu.mit.mobile.android.locast.example.BuildConfig;
 import edu.mit.mobile.android.locast.net.LocastApplicationCallbacks;
 import edu.mit.mobile.android.locast.net.NetworkClient;
 import edu.mit.mobile.android.locast.sync.SyncableProvider;
@@ -69,6 +70,21 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
     }
 
     /**
+     * Retrieves the parent of the given content: dir or item. This only handles content URIs from
+     * this provider.
+     *
+     * @param content
+     *            a dir or item content uri
+     * @return the content: uri of the parent
+     */
+    public static Uri getParent(Uri content) {
+        if (content.getPathSegments().size() == 1) {
+            throw new IllegalArgumentException("Cannot retrieve parent for " + content);
+        }
+        return ProviderUtils.removeLastPathSegment(content);
+    }
+
+    /**
      * @param context
      * @param uri
      *            the URI of the item whose field should be queried
@@ -97,12 +113,23 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
 
     @Override
     public String getPostPath(Context context, Uri uri) throws NoPublicPath {
-        return getPublicPath(context, uri);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "getPublicPath " + uri);
+        }
+        final String type = getType(uri);
+
+        if (!type.startsWith(ProviderUtils.TYPE_ITEM_PREFIX)) {
+            throw new IllegalArgumentException("getPostPath can only handle content items");
+        }
+
+        return getPublicPath(context, getParent(uri));
     }
 
     @Override
     public String getPublicPath(Context context, Uri uri) throws NoPublicPath {
-        Log.d(TAG, "getPublicPath " + uri);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "getPublicPath " + uri);
+        }
         final String type = getType(uri);
 
         if (mBaseUrl == null) {
@@ -116,7 +143,7 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
             if (uri.getPathSegments().size() == 1) {
                 return mBaseUrl + "cast/";
             } else {
-                return getPathFromField(context, ProviderUtils.removeLastPathSegment(uri),
+                return getPathFromField(context, getParent(uri),
                         Collection.COL_CASTS_URI);
             }
 
@@ -127,10 +154,7 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
         } else if (Collection.TYPE_DIR.equals(type)) {
             return mBaseUrl + "collection/";
 
-            // TODO find a way to make this generic. Inspect the SYNC_MAP somehow?
-            // } else if (CastMedia.TYPE_DIR.equals(type)) {
-            // return JsonSyncableItem.SyncChildRelation.getPathFromField(context,
-            // CastMedia.getCard(uri), Card.COL_MEDIA_URL);
+            // all items are resolved this way, as the superclass can handle such.
         } else {
             return super.getPublicPath(context, uri);
         }

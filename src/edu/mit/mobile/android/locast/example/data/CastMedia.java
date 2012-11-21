@@ -1,5 +1,6 @@
 package edu.mit.mobile.android.locast.example.data;
 
+import android.content.ContentUris;
 import android.database.Cursor;
 import android.net.Uri;
 import edu.mit.mobile.android.content.ProviderUtils;
@@ -22,7 +23,8 @@ public class CastMedia extends VideoContent {
 
     @Override
     public Uri getContentUri() {
-        return null;
+        return Cast.CAST_MEDIA.getUri(ContentUris.withAppendedId(Cast.CONTENT_URI,
+                getLong(getColumnIndexOrThrow(CAST))));
     }
 
     public static final ItemSyncMap SYNC_MAP = new ItemSyncMap();
