@@ -21,7 +21,6 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
 
     public static final String AUTHORITY = "edu.mit.mobile.android.locast.example";
 
-
     private static final int DB_VER = 1;
 
     private static final String TAG = LocastProvider.class.getSimpleName();

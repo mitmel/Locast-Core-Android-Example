@@ -17,7 +17,8 @@ public class CastMediaAdapter extends SimpleThumbnailCursorAdapter {
             CastMedia.COL_SCREENSHOT };
 
     public static final String[] PROJECTION = ArrayUtils.concat(FROM, new String[] { CastMedia._ID,
-            CastMedia.COL_MIME_TYPE, CastMedia.COL_LOCAL_URL, CastMedia.COL_MEDIA_URL });
+            CastMedia.COL_MIME_TYPE, CastMedia.COL_LOCAL_URL, CastMedia.COL_MEDIA_URL,
+            CastMedia.COL_AUTHOR_URI });
 
     public static final int[] TO = new int[] { R.id.thumbnail, R.id.thumbnail };
 

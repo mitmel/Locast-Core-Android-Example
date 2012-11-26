@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.accounts.Account;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.google.android.maps.GeoPoint;
 import com.stackoverflow.MediaUtils;
 
+import edu.mit.mobile.android.locast.data.Authorable;
 import edu.mit.mobile.android.locast.data.CastMedia;
 import edu.mit.mobile.android.locast.data.CastMedia.CastMediaInfo;
 import edu.mit.mobile.android.locast.data.MediaProcessingException;
@@ -93,9 +95,12 @@ public class CastMediaHelper {
 
         CastMediaInfo cmi;
         try {
-            cmi = CastMedia.addMedia(mContext,
-                    Authenticator.getFirstAccount(mContext, Authenticator.ACCOUNT_TYPE), castMedia,
-                    content, new ContentValues());
+            final Account me = Authenticator.getFirstAccount(mContext, Authenticator.ACCOUNT_TYPE);
+            final ContentValues cv = new ContentValues();
+
+            Authorable.putAuthorInformation(mContext, me, cv);
+
+            cmi = CastMedia.addMedia(mContext, me, castMedia, content, cv);
             // if the current location is null, infer it from the first media that's added.
             if (mLocation == null && cmi.location != null) {
                 setLocation(cmi.location);
@@ -127,6 +132,7 @@ public class CastMediaHelper {
     public void setLocation(Location location) {
         mLocation = location;
     }
+
     public void setLocation(GeoPoint location) {
         mLocation = new Location("manual");
     }
