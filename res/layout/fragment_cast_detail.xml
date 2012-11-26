@@ -9,6 +9,8 @@
         style="@style/Cast.Media.Empty.Detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/description"
+        android:layout_alignParentBottom="true"
         android:text="@string/this_cast_has_no_media" />
 
     <Gallery
