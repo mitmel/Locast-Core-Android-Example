@@ -2,6 +2,7 @@ package edu.mit.mobile.android.locast.example.app;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,7 +13,10 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,8 +28,12 @@ import edu.mit.mobile.android.content.ProviderUtils;
 import edu.mit.mobile.android.imagecache.ImageCache;
 import edu.mit.mobile.android.imagecache.ImageLoaderAdapter;
 import edu.mit.mobile.android.locast.Constants;
+import edu.mit.mobile.android.locast.app.DeleteDialogFragment;
+import edu.mit.mobile.android.locast.app.DeleteDialogFragment.OnDeleteListener;
+import edu.mit.mobile.android.locast.data.Authorable;
 import edu.mit.mobile.android.locast.data.CastMedia;
 import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.sync.LocastSyncService;
 
@@ -45,6 +53,8 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
     private Gallery mCastMediaView;
     private CastMediaAdapter mCastMediaAdapter;
     private Uri mCastMedia;
+    private Uri mCast;
+    private OnDeleteListener mOnDeleteListener;
 
     protected abstract String[] getCastProjection();
 
@@ -90,6 +100,8 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
         mCastMediaView.setAdapter(new ImageLoaderAdapter(mCastMediaAdapter, mImageCache,
                 CastMediaAdapter.IMAGE_IDS, 300, 300));
 
+        registerForContextMenu(mCastMediaView);
+
     }
 
     protected void restartLoaders() {
@@ -116,6 +128,80 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
         restartLoaders();
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        switch (v.getId()) {
+            case R.id.cast_media: {
+                getActivity().getMenuInflater().inflate(R.menu.context_cast_media, menu);
+                final Cursor c = mCastMediaAdapter.getCursor();
+                if (c == null) {
+                    return;
+                }
+                AdapterView.AdapterContextMenuInfo info;
+                try {
+                    info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+                } catch (final ClassCastException e) {
+                    Log.e(TAG, "bad menuInfo", e);
+                    return;
+                }
+
+                c.moveToPosition(info.position);
+
+                final String myUserUri = Authenticator.getUserUri(getActivity(),
+                        Authenticator.ACCOUNT_TYPE);
+
+                final boolean isEditable = Authorable.canEdit(myUserUri, c);
+
+                menu.findItem(R.id.delete).setVisible(isEditable);
+
+            }
+                break;
+            default:
+                super.onCreateContextMenu(menu, v, menuInfo);
+        }
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info;
+        try {
+            info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        } catch (final ClassCastException e) {
+            Log.e(TAG, "bad menuInfo", e);
+            return false;
+        }
+
+        final Uri itemUri = ContentUris.withAppendedId(mCastMedia, info.id);
+
+        switch (item.getItemId()) {
+            case R.id.delete:
+                showDeleteDialog(itemUri);
+                return true;
+
+            case R.id.view: {
+                final Cursor c = mCastMediaAdapter.getCursor();
+                c.moveToPosition(info.position);
+                final Intent i = CastMedia.showMedia(getActivity(), c, mCastMedia);
+                if (i != null) {
+                    startActivity(i);
+                }
+                return true;
+            }
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    private void showDeleteDialog(Uri item) {
+        final DeleteDialogFragment del = DeleteDialogFragment.newInstance(item, getActivity()
+                .getString(R.string.delete_cast_media),
+                getString(R.string.delete_cast_media_confirm_message));
+        del.registerOnDeleteListener(mOnDeleteListener);
+        del.show(getFragmentManager(), "delete-item-dialog");
+    }
+
+
     protected abstract void loadCastFromCursor(Loader<Cursor> loader, Cursor c);
 
     public CastMediaAdapter getCastMediaAdapter() {
@@ -127,6 +213,7 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
         switch (id) {
             case LOADER_CAST:
                 final Uri cast = args.getParcelable(ARG_CAST_URI);
+                mCast = cast;
                 return new CursorLoader(getActivity(), cast, getCastProjection(), null, null, null);
 
             case LOADER_CAST_MEDIA:

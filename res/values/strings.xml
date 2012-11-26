@@ -12,6 +12,8 @@
     <string name="err_unhandled_intent">Error: cannot handle this type of data</string>
     <string name="edit">Edit</string>
     <string name="done">Done</string>
+    <string name="delete">Delete</string>
+    <string name="publish">Publish</string>
     <string name="edit_cast">Edit cast</string>
     <string name="err_saving_cast">Error saving cast.</string>
     <string name="notice_saved">Saved.</string>
@@ -22,10 +24,12 @@
     <string name="cast_new">New cast</string>
     <string name="err_validate_please_enter_a_title">Please enter a title.</string>
     <string name="this_cast_has_no_media">This cast has no media</string>
-    <string name="publish">Publish</string>
     <string name="location_link_no_location">No Location</string>
     <string name="location_link_location_found">Location found</string>
     <string name="location_link_accuracy_meter">±%.0f meters</string>
     <string name="location_link_accuracy_kilometer">±%.01f kilometers</string>
+    <string name="delete_cast_media">Delete item</string>
+    <string name="delete_cast_media_confirm_message">Delete this item?</string>
+    <string name="view_item">View item</string>
 
 </resources>
