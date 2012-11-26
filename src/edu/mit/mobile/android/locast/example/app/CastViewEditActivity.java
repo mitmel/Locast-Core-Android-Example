@@ -115,7 +115,7 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
         if (Intent.ACTION_INSERT.equals(getIntent().getAction())) {
             if (save) {
 
-                loadContentFragment(new Intent(Intent.ACTION_VIEW, cast));
+                showContentIfNotDraft(cast);
 
             } else {
                 setResult(RESULT_CANCELED);
@@ -128,6 +128,20 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
                 LocastSyncService.startSync(this, cast, true);
 
             }
+            showContentIfNotDraft(cast);
+        }
+    }
+
+    /**
+     * If it's a draft, just quit and don't show the content as if it were published.
+     *
+     * @param cast
+     */
+    private void showContentIfNotDraft(Uri cast) {
+        if (mIsDraft) {
+            setResult(RESULT_OK);
+            finish();
+        } else {
             loadContentFragment(new Intent(Intent.ACTION_VIEW, cast));
         }
     }
