@@ -62,7 +62,7 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
 
         mMap = (GoogleStaticMapView) findViewById(R.id.map);
         mMapFrame = findViewById(R.id.map_frame);
-        mMapFrame.setVisibility(View.INVISIBLE);
+
 
         mImageCache = ImageCache.getInstance(this);
 
@@ -185,20 +185,21 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
             return;
         }
 
+        mShowMap = showMap;
+
         if (showMap) {
             restartLoaders();
         } else {
             resetMap();
         }
-
-        mShowMap = showMap;
     }
 
     protected void resetMap() {
         mMap.clearMap();
-        if (mMapFrame.getVisibility() != View.INVISIBLE) {
+        final int hiddenState = mShowMap ? View.INVISIBLE : View.GONE;
+        if (mMapFrame.getVisibility() != hiddenState) {
             mMapFrame.startAnimation(AnimationUtils.loadAnimation(this, R.anim.from_bottom_out));
-            mMapFrame.setVisibility(View.INVISIBLE);
+            mMapFrame.setVisibility(hiddenState);
         }
     }
 
