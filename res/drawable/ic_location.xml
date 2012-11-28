@@ -10,5 +10,8 @@
     <item
         android:drawable="@drawable/ic_location_found"
         android:maxLevel="2"/>
+    <item
+        android:drawable="@drawable/ic_location_locked"
+        android:maxLevel="3"/>
 
 </level-list>

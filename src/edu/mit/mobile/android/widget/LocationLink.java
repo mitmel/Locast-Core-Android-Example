@@ -34,6 +34,7 @@ import android.os.AsyncTask;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.Button;
 import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.utils.AddressUtils;
@@ -52,22 +53,60 @@ public class LocationLink extends Button {
     private String mGeocodedName;
     private final int mNoLocationResId = R.string.location_link_no_location;
     private boolean mShowAccuracy = true;
-    private final boolean mShowLatLon = true;
+    private boolean mShowLatLon = true;
 
-    final ConnectivityManager mCm;
+    // these should sync up with the drawable's xml
+    private static final int LEVEL_OFF = 0;
+    private static final int LEVEL_SEARCHING = 1;
+    private static final int LEVEL_FOUND = 2;
+    private static final int LEVEL_LOCKED = 3;
+
+    public static final int STATE_OFF = LEVEL_OFF;
+    public static final int STATE_SEARCHING = LEVEL_SEARCHING;
+    public static final int STATE_FOUND = LEVEL_FOUND;
+
+    private final OnClickListener mOnClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (mWrappedOnClickListener != null) {
+                mWrappedOnClickListener.onClick(v);
+            }
+            setLocationLocked(!mLocked);
+        }
+    };
+
+    private OnClickListener mWrappedOnClickListener;
+
+    ConnectivityManager mCm;
+
+    private Location mSavedLocation;
+
+    private boolean mLocked;
+
+    private int mState;
+
+    private String mSavedGeocodedName;
 
     public LocationLink(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        setText(mNoLocationResId);
-        mCm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        init(context);
     }
 
     public LocationLink(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        init(context);
     }
 
     public LocationLink(Context context) {
-        this(context, null);
+        super(context);
+        init(context);
+    }
+
+    private void init(Context context) {
+        setText(mNoLocationResId);
+        mCm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        super.setOnClickListener(mOnClickListener);
     }
 
     /**
@@ -75,7 +114,11 @@ public class LocationLink extends Button {
      *
      * @param level
      */
-    public void setDrawableLevel(int level) {
+    private void setDrawableLevel(int level) {
+        if (mLocked){
+            level = LEVEL_LOCKED;
+        }
+
         final Drawable left = getCompoundDrawables()[0];
         if (left != null) {
             left.setLevel(level);
@@ -100,6 +143,72 @@ public class LocationLink extends Button {
         }
     }
 
+    public void setLocation(Location location, int state) {
+        setLocation(location);
+        setLocationState(state);
+    }
+
+    @Override
+    public int getMinimumHeight() {
+
+        int drawableH = 0;
+        final Drawable l = getCompoundDrawables()[0];
+        if (l != null) {
+            drawableH = l.getIntrinsicHeight() + getCompoundPaddingTop()
+                    + getCompoundPaddingBottom();
+        }
+
+        return Math.max(super.getMinimumHeight(), drawableH);
+    }
+
+    public void setSavedLocation(Location saved) {
+        // only update if it's a distinctly new location.
+        if (this.mSavedLocation == null || saved == null
+                || this.mSavedLocation.distanceTo(saved) != 0) {
+
+            this.mSavedLocation = saved;
+            mSavedGeocodedName = null; // invalidated
+
+            if (mSavedLocation != null) {
+                setLocationLocked(true);
+            }
+
+            updateLabel();
+        }
+
+    }
+
+    public void setLocationState(int state) {
+        switch (state) {
+            case STATE_FOUND:
+            case STATE_OFF:
+            case STATE_SEARCHING:
+                mState = state;
+                setDrawableLevel(state);
+                break;
+
+            default:
+                throw new IllegalArgumentException("Invalid state: " + state);
+        }
+    }
+
+    public Location getShownLocation() {
+        return mLocked ? mSavedLocation : mLocation;
+    }
+
+    public void setLocationLocked(boolean locked) {
+        mLocked = locked;
+
+        setDrawableLevel(mState);
+        setSelected(locked);
+        updateLabel();
+    }
+
+    @Override
+    public void setOnClickListener(OnClickListener l) {
+        mWrappedOnClickListener = l;
+    }
+
     /**
      * Sets the location that is displayed on the link. Will display accuracy information if present
      * and if showAccuracy is set.
@@ -112,6 +221,10 @@ public class LocationLink extends Button {
         l.setLatitude(latitude);
         l.setLongitude(longitude);
         setLocation(l);
+    }
+
+    public void setShowLatLon(boolean showLatLon) {
+        mShowLatLon = showLatLon;
     }
 
     public Location getLocation() {
@@ -136,13 +249,26 @@ public class LocationLink extends Button {
         updateLabel();
     }
 
+    private void setSavedGeocodedName(String placename) {
+        mSavedGeocodedName = placename;
+        updateLabel();
+    }
+
     private void updateLabel() {
-        if (mLocation == null) {
+        Location location = mLocation;
+        String placename = mGeocodedName;
+
+        if (mLocked) {
+            location = mSavedLocation;
+            placename = mSavedGeocodedName;
+        }
+
+        if (location == null) {
             setText(mNoLocationResId);
         } else {
             String accuracy = "";
-            if (mShowAccuracy && mLocation.hasAccuracy()) {
-                final float accuracyVal = mLocation.getAccuracy();
+            if (mShowAccuracy && location.hasAccuracy()) {
+                final float accuracyVal = location.getAccuracy();
                 if (accuracyVal <= 500) {
                     accuracy = " "
                             + getResources().getString(R.string.location_link_accuracy_meter,
@@ -154,22 +280,18 @@ public class LocationLink extends Button {
                 }
             }
 
-            String placename;
-
-            if (mGeocodedName != null) {
-                placename = mGeocodedName;
-            } else {
+            if (placename == null) {
                 if (mShowLatLon) {
-                    placename = String.format(LAT_LON_FORMAT, mLocation.getLatitude(),
-                            mLocation.getLongitude());
+                    placename = String.format(LAT_LON_FORMAT, location.getLatitude(),
+                            location.getLongitude());
                 } else {
                     placename = getResources().getString(R.string.location_link_location_found);
                 }
                 final NetworkInfo activeNet = mCm.getActiveNetworkInfo();
                 final boolean hasNetConnection = activeNet != null && activeNet.isConnected();
                 if (hasNetConnection) {
-                    final GeocoderTask t = new GeocoderTask();
-                    t.execute(mLocation);
+                    final GeocoderTask t = new GeocoderTask(mLocked);
+                    t.execute(location);
                 }
             }
 
@@ -189,6 +311,10 @@ public class LocationLink extends Button {
 
         this.mLocation = ss.location;
         this.mGeocodedName = ss.geocodedName;
+        this.mSavedLocation = ss.savedLocation;
+        this.mSavedGeocodedName = ss.savedGeocodedName;
+        setLocationState(this.mState);
+        setLocationLocked(ss.locked);
         updateLabel();
 
     }
@@ -198,8 +324,12 @@ public class LocationLink extends Button {
         final Parcelable superState = super.onSaveInstanceState();
 
         final SavedState ss = new SavedState(superState);
-        ss.geocodedName = mGeocodedName;
         ss.location = mLocation;
+        ss.geocodedName = mGeocodedName;
+        ss.savedLocation = mSavedLocation;
+        ss.savedGeocodedName = mSavedGeocodedName;
+        ss.state = mState;
+        ss.locked = mLocked;
         return ss;
     }
 
@@ -210,14 +340,22 @@ public class LocationLink extends Button {
      *
      */
     private class SavedState extends BaseSavedState {
-        String geocodedName;
         Location location;
+        String geocodedName;
+        Location savedLocation;
+        String savedGeocodedName;
+        int state;
+        boolean locked;
 
         public SavedState(Parcel in) {
             super(in);
 
-            geocodedName = in.readString();
             location = Location.CREATOR.createFromParcel(in);
+            geocodedName = in.readString();
+            savedLocation = Location.CREATOR.createFromParcel(in);
+            savedGeocodedName = in.readString();
+            state = in.readInt();
+            locked = in.readInt() != 0;
         }
 
         public SavedState(Parcelable superState) {
@@ -228,12 +366,22 @@ public class LocationLink extends Button {
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
 
-            dest.writeString(geocodedName);
             dest.writeParcelable(location, flags);
+            dest.writeString(geocodedName);
+            dest.writeParcelable(savedLocation, flags);
+            dest.writeString(savedGeocodedName);
+            dest.writeInt(state);
+            dest.writeInt(locked ? 1 : 0);
         }
     }
 
     private class GeocoderTask extends AsyncTask<Location, Long, String> {
+        private final boolean mLocked;
+
+        public GeocoderTask(boolean locked) {
+            mLocked = locked;
+        }
+
         @Override
         protected String doInBackground(Location... params) {
             final Location location = params[0];
@@ -257,7 +405,11 @@ public class LocationLink extends Button {
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-                setGeocodedName(result);
+                if (mLocked) {
+                    setSavedGeocodedName(result);
+                } else {
+                    setGeocodedName(result);
+                }
             }
         }
     }

@@ -96,7 +96,10 @@
     </style>
     
     <style name="LocationLink">
+        <item name="android:background">@null</item>
+        <item name="android:textColor">@color/location_link_text</item>
         <item name="android:drawableLeft">@drawable/ic_location</item>
+        <item name="android:gravity">center_vertical</item>
         <item name="android:padding">@dimen/padding_medium</item>
     </style>
 
