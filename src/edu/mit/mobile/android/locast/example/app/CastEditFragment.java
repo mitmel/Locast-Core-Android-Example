@@ -173,8 +173,9 @@ public class CastEditFragment extends CastFragment {
             mTitle.setText(c.getString(c.getColumnIndexOrThrow(Cast.COL_TITLE)));
             mDescription.setText(c.getString(c.getColumnIndexOrThrow(Cast.COL_DESCRIPTION)));
             mIsDraft = Cast.isDraft(c);
-            mIsLoaded = true;
             mLocLink.setSavedLocation(Locatable.toLocation(c));
+            mLocLink.setShowSaved(true);
+            mIsLoaded = true;
         }
     }
 

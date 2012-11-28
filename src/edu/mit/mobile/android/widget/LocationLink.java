@@ -40,7 +40,8 @@ import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.utils.AddressUtils;
 
 /**
- * A clickable link that shows a reverse-geocoded location.
+ * A button that shows a reverse-geocoded location. This can toggle between two different displays:
+ * the current location or a saved location.
  *
  * @author steve
  *
@@ -59,7 +60,7 @@ public class LocationLink extends Button {
     private static final int LEVEL_OFF = 0;
     private static final int LEVEL_SEARCHING = 1;
     private static final int LEVEL_FOUND = 2;
-    private static final int LEVEL_LOCKED = 3;
+    private static final int LEVEL_SAVED = 3;
 
     public static final int STATE_OFF = LEVEL_OFF;
     public static final int STATE_SEARCHING = LEVEL_SEARCHING;
@@ -72,7 +73,7 @@ public class LocationLink extends Button {
             if (mWrappedOnClickListener != null) {
                 mWrappedOnClickListener.onClick(v);
             }
-            setLocationLocked(!mLocked);
+            setShowSaved(!mShowSaved);
         }
     };
 
@@ -82,11 +83,16 @@ public class LocationLink extends Button {
 
     private Location mSavedLocation;
 
-    private boolean mLocked;
+    private boolean mShowSaved;
 
     private int mState;
 
     private String mSavedGeocodedName;
+
+    /**
+     * Set this to true to disable updating the label after changing the data via accessors.
+     */
+    private boolean mRestoring = false;
 
     public LocationLink(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -107,6 +113,9 @@ public class LocationLink extends Button {
         setText(mNoLocationResId);
         mCm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         super.setOnClickListener(mOnClickListener);
+
+        // initially unclickable until a saved location is loaded.
+        setClickable(false);
     }
 
     /**
@@ -115,8 +124,8 @@ public class LocationLink extends Button {
      * @param level
      */
     private void setDrawableLevel(int level) {
-        if (mLocked){
-            level = LEVEL_LOCKED;
+        if (mShowSaved) {
+            level = LEVEL_SAVED;
         }
 
         final Drawable left = getCompoundDrawables()[0];
@@ -161,6 +170,11 @@ public class LocationLink extends Button {
         return Math.max(super.getMinimumHeight(), drawableH);
     }
 
+    /**
+     * Sets the saved location.
+     *
+     * @param saved
+     */
     public void setSavedLocation(Location saved) {
         // only update if it's a distinctly new location.
         if (this.mSavedLocation == null || saved == null
@@ -169,13 +183,15 @@ public class LocationLink extends Button {
             this.mSavedLocation = saved;
             mSavedGeocodedName = null; // invalidated
 
-            if (mSavedLocation != null) {
-                setLocationLocked(true);
+            final boolean hasSaved = mSavedLocation != null;
+
+            setClickable(hasSaved);
+
+            // only hide the shown saved if it gets set to null.
+            if (!hasSaved) {
+                setShowSaved(false);
             }
-
-            updateLabel();
         }
-
     }
 
     public void setLocationState(int state) {
@@ -193,14 +209,18 @@ public class LocationLink extends Button {
     }
 
     public Location getShownLocation() {
-        return mLocked ? mSavedLocation : mLocation;
+        return mShowSaved ? mSavedLocation : mLocation;
     }
 
-    public void setLocationLocked(boolean locked) {
-        mLocked = locked;
+    public void setShowSaved(boolean showSaved) {
+        if (mSavedLocation == null || showSaved == mShowSaved) {
+            return;
+        }
+
+        mShowSaved = showSaved;
 
         setDrawableLevel(mState);
-        setSelected(locked);
+        setSelected(showSaved);
         updateLabel();
     }
 
@@ -255,10 +275,14 @@ public class LocationLink extends Button {
     }
 
     private void updateLabel() {
+        if (mRestoring) {
+            return;
+        }
+
         Location location = mLocation;
         String placename = mGeocodedName;
 
-        if (mLocked) {
+        if (mShowSaved) {
             location = mSavedLocation;
             placename = mSavedGeocodedName;
         }
@@ -290,7 +314,7 @@ public class LocationLink extends Button {
                 final NetworkInfo activeNet = mCm.getActiveNetworkInfo();
                 final boolean hasNetConnection = activeNet != null && activeNet.isConnected();
                 if (hasNetConnection) {
-                    final GeocoderTask t = new GeocoderTask(mLocked);
+                    final GeocoderTask t = new GeocoderTask(mShowSaved);
                     t.execute(location);
                 }
             }
@@ -309,12 +333,20 @@ public class LocationLink extends Button {
         final SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
 
+        mRestoring = true;
+
         this.mLocation = ss.location;
         this.mGeocodedName = ss.geocodedName;
-        this.mSavedLocation = ss.savedLocation;
+
+        setSavedLocation(ss.savedLocation);
         this.mSavedGeocodedName = ss.savedGeocodedName;
+
         setLocationState(this.mState);
-        setLocationLocked(ss.locked);
+
+        setShowSaved(ss.showSaved);
+
+        mRestoring = false;
+
         updateLabel();
 
     }
@@ -329,7 +361,7 @@ public class LocationLink extends Button {
         ss.savedLocation = mSavedLocation;
         ss.savedGeocodedName = mSavedGeocodedName;
         ss.state = mState;
-        ss.locked = mLocked;
+        ss.showSaved = mShowSaved;
         return ss;
     }
 
@@ -345,7 +377,7 @@ public class LocationLink extends Button {
         Location savedLocation;
         String savedGeocodedName;
         int state;
-        boolean locked;
+        boolean showSaved;
 
         public SavedState(Parcel in) {
             super(in);
@@ -355,7 +387,7 @@ public class LocationLink extends Button {
             savedLocation = Location.CREATOR.createFromParcel(in);
             savedGeocodedName = in.readString();
             state = in.readInt();
-            locked = in.readInt() != 0;
+            showSaved = in.readInt() != 0;
         }
 
         public SavedState(Parcelable superState) {
@@ -371,15 +403,15 @@ public class LocationLink extends Button {
             dest.writeParcelable(savedLocation, flags);
             dest.writeString(savedGeocodedName);
             dest.writeInt(state);
-            dest.writeInt(locked ? 1 : 0);
+            dest.writeInt(showSaved ? 1 : 0);
         }
     }
 
     private class GeocoderTask extends AsyncTask<Location, Long, String> {
-        private final boolean mLocked;
+        private final boolean mSaved;
 
-        public GeocoderTask(boolean locked) {
-            mLocked = locked;
+        public GeocoderTask(boolean saved) {
+            mSaved = saved;
         }
 
         @Override
@@ -405,7 +437,7 @@ public class LocationLink extends Button {
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-                if (mLocked) {
+                if (mSaved) {
                     setSavedGeocodedName(result);
                 } else {
                     setGeocodedName(result);
