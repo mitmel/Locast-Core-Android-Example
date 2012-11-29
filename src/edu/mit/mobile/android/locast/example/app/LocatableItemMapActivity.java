@@ -78,6 +78,10 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
 
         mShowMap = args.getBoolean(INSTANCE_SHOW_MAP, true);
 
+        if (!mShowMap) {
+            mMapFrame.setVisibility(View.GONE);
+        }
+
         mLocatableArgs = args.getParcelable(INSTANCE_LOCATABLE_ARGS);
         if (mLocatableArgs == null) {
             mLocatableArgs = new Bundle(1);
