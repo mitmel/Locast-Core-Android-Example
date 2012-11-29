@@ -46,9 +46,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp" />
 
-        <edu.mit.mobile.android.widget.LocationLink
+        <edu.mit.mobile.android.widget.LocationButton
             android:id="@+id/location"
-            style="@style/LocationLink"
+            style="@style/Cast.Location"
             android:layout_width="match_parent"
             android:minLines="2"
             android:layout_height="wrap_content" />
