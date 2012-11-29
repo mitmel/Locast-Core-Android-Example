@@ -20,7 +20,7 @@ import edu.mit.mobile.android.locast.example.accounts.AuthenticationService;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.location.IncrementalLocator;
-import edu.mit.mobile.android.widget.LocationLink;
+import edu.mit.mobile.android.widget.LocationButton;
 
 public class CastEditFragment extends CastFragment {
 
@@ -37,7 +37,7 @@ public class CastEditFragment extends CastFragment {
     private TextView mDescription;
 
     private IncrementalLocator mLocator;
-    private LocationLink mLocLink;
+    private LocationButton mLocButton;
 
     // stateful
 
@@ -104,8 +104,8 @@ public class CastEditFragment extends CastFragment {
 
         mTitle = (TextView) view.findViewById(R.id.title);
         mDescription = (TextView) view.findViewById(R.id.description);
-        mLocLink = (LocationLink) view.findViewById(R.id.location);
-        mLocLink.setShowLatLon(false);
+        mLocButton = (LocationButton) view.findViewById(R.id.location);
+        mLocButton.setShowLatLon(false);
     }
 
     @Override
@@ -150,15 +150,15 @@ public class CastEditFragment extends CastFragment {
             switch (providerType) {
 
                 case IncrementalLocator.PROVIDER_TYPE_SENSED:
-                    locState = LocationLink.STATE_FOUND;
+                    locState = LocationButton.STATE_FOUND;
                     break;
 
                 default:
                 case IncrementalLocator.PROVIDER_TYPE_LAST_KNOWN:
-                    locState = LocationLink.STATE_SEARCHING;
+                    locState = LocationButton.STATE_SEARCHING;
             }
 
-            mLocLink.setLocation(location, locState);
+            mLocButton.setLocation(location, locState);
         }
     };
 
@@ -173,8 +173,8 @@ public class CastEditFragment extends CastFragment {
             mTitle.setText(c.getString(c.getColumnIndexOrThrow(Cast.COL_TITLE)));
             mDescription.setText(c.getString(c.getColumnIndexOrThrow(Cast.COL_DESCRIPTION)));
             mIsDraft = Cast.isDraft(c);
-            mLocLink.setSavedLocation(Locatable.toLocation(c));
-            mLocLink.setShowSaved(true);
+            mLocButton.setSavedLocation(Locatable.toLocation(c));
+            mLocButton.setShowSaved(true);
             mIsLoaded = true;
         }
     }
@@ -229,7 +229,7 @@ public class CastEditFragment extends CastFragment {
         cv.put(Cast.COL_TITLE, mTitle.getText().toString());
         cv.put(Cast.COL_DESCRIPTION, mDescription.getText().toString());
 
-        final Location location = mLocLink.getShownLocation();
+        final Location location = mLocButton.getShownLocation();
 
         if (location != null) {
             cv.put(Cast.COL_LATITUDE, location.getLatitude());
