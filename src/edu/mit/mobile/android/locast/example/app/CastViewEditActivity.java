@@ -3,6 +3,7 @@ package edu.mit.mobile.android.locast.example.app;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -49,6 +50,13 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
         super.onCreateOptionsMenu(menu);
 
         getSupportMenuInflater().inflate(R.menu.activity_cast_view, menu);
+
+        // ActionBarSherlock bug workaround.
+        // See https://github.com/JakeWharton/ActionBarSherlock/issues/442
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB) {
+            menu.add("").setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        }
+
         return true;
     }
 
@@ -189,10 +197,11 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
         menu.findItem(R.id.edit).setVisible(mCanEdit);
         menu.findItem(R.id.new_photo).setVisible(mCanEdit);
         menu.findItem(R.id.new_video).setVisible(mCanEdit);
-        return super.onPrepareOptionsMenu(menu);
+        return true;
     }
 
     @Override

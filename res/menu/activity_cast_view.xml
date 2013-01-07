@@ -13,8 +13,8 @@
         android:title="@string/edit"/>
     <item
         android:id="@+id/new_video"
-        android:showAsAction="ifRoom"
         android:icon="@drawable/ic_menu_video"
+        android:showAsAction="ifRoom"
         android:title="@string/new_video"/>
 
 </menu>
