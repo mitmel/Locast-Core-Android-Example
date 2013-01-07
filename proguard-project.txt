@@ -24,3 +24,23 @@
 -dontwarn java.awt.**,javax.security.**,java.beans.**
 -dontwarn javax.xml.stream.events.**
 -dontwarn com.google.gdata.**, com.google.common.**
+
+
+-keep class android.support.v4.app.** { *; }
+-keep interface android.support.v4.app.** { *; }
+-keep class com.actionbarsherlock.** { *; }
+-keep interface com.actionbarsherlock.** { *; }
+
+# need to figure out how to use proguard with SimpleContentProvider
+-keepattributes *Annotation*
+
+-keepattributes DBTable
+-keepattributes DBSortOrder
+-keepattributes DBColumn
+
+-keepclassmembers class * {
+    @edu.mit.mobile.android.content.DBTable *;
+    @edu.mit.mobile.android.content.DBSortOrder *;
+    @edu.mit.mobile.android.content.column.DBColumn *;
+}
+
