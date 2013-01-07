@@ -133,7 +133,7 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
 
         if (mBaseUrl == null) {
             final NetworkClient nc = ((LocastApplicationCallbacks) context.getApplicationContext())
-                    .getNetworkClient(context, null);
+                    .getNetworkClientForAccount(context, null);
             mBaseUrl = nc.getBaseUrl();
         }
 
