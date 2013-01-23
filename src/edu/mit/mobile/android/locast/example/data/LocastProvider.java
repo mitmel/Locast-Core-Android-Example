@@ -12,7 +12,6 @@ import edu.mit.mobile.android.locast.data.JSONSyncableIdenticalChildFinder;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.NoPublicPath;
 import edu.mit.mobile.android.locast.example.BuildConfig;
-import edu.mit.mobile.android.locast.net.LocastApplicationCallbacks;
 import edu.mit.mobile.android.locast.net.NetworkClient;
 import edu.mit.mobile.android.locast.sync.SyncableProvider;
 import edu.mit.mobile.android.locast.sync.SyncableSimpleContentProvider;
@@ -111,7 +110,7 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
     }
 
     @Override
-    public String getPostPath(Context context, Uri uri) throws NoPublicPath {
+    public String getPostPath(Context context, Uri uri, NetworkClient nc) throws NoPublicPath {
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "getPublicPath " + uri);
         }
@@ -121,19 +120,17 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
             throw new IllegalArgumentException("getPostPath can only handle content items");
         }
 
-        return getPublicPath(context, getParent(uri));
+        return getPublicPath(context, getParent(uri), nc);
     }
 
     @Override
-    public String getPublicPath(Context context, Uri uri) throws NoPublicPath {
+    public String getPublicPath(Context context, Uri uri, NetworkClient nc) throws NoPublicPath {
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "getPublicPath " + uri);
         }
         final String type = getType(uri);
 
         if (mBaseUrl == null) {
-            final NetworkClient nc = ((LocastApplicationCallbacks) context.getApplicationContext())
-                    .getNetworkClientForAccount(context, null);
             mBaseUrl = nc.getBaseUrl();
         }
 
@@ -155,7 +152,7 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
 
             // all items are resolved this way, as the superclass can handle such.
         } else {
-            return super.getPublicPath(context, uri);
+            return super.getPublicPath(context, uri, nc);
         }
     }
 
