@@ -105,6 +105,10 @@ public class CastMediaHelper {
             if (mLocation == null && cmi.location != null) {
                 setLocation(cmi.location);
             }
+
+            // bump cast to it'll be marked dirty
+            mContext.getContentResolver().update(cast, new ContentValues(), null, null);
+
             LocastSyncService.startSync(mContext, cast, true);
         } catch (final MediaProcessingException e) {
             Log.e(TAG, "could not add media", e);
