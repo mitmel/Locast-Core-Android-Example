@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.Locatable;
 import edu.mit.mobile.android.locast.example.BuildConfig;
 import edu.mit.mobile.android.locast.example.R;
@@ -224,7 +225,7 @@ public class CastEditFragment extends CastFragment {
             Log.d(TAG, "save() called with arguments " + args);
         }
 
-        final ContentValues cv = new ContentValues();
+        final ContentValues cv = JsonSyncableItem.newContentItem();
 
         cv.put(Cast.COL_TITLE, mTitle.getText().toString());
         cv.put(Cast.COL_DESCRIPTION, mDescription.getText().toString());

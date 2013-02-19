@@ -23,6 +23,7 @@ import com.stackoverflow.MediaUtils;
 import edu.mit.mobile.android.locast.data.Authorable;
 import edu.mit.mobile.android.locast.data.CastMedia;
 import edu.mit.mobile.android.locast.data.CastMedia.CastMediaInfo;
+import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.MediaProcessingException;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
@@ -96,7 +97,7 @@ public class CastMediaHelper {
         CastMediaInfo cmi;
         try {
             final Account me = Authenticator.getFirstAccount(mContext, Authenticator.ACCOUNT_TYPE);
-            final ContentValues cv = new ContentValues();
+            final ContentValues cv = JsonSyncableItem.newContentItem();
 
             Authorable.putAuthorInformation(mContext, me, cv);
 
