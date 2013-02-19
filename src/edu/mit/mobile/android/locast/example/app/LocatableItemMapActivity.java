@@ -320,7 +320,7 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
     }
 
     @Override
-    public void onImageLoaded(long id, Uri imageUri, Drawable image) {
+    public void onImageLoaded(int id, Uri imageUri, Drawable image) {
         if (R.id.map == id) {
             mMapFrame.setVisibility(View.VISIBLE);
             mMapFrame.startAnimation(AnimationUtils.loadAnimation(this, R.anim.from_bottom_in));
