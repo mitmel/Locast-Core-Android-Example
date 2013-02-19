@@ -106,7 +106,7 @@ public class CastMediaHelper {
                 setLocation(cmi.location);
             }
 
-            // bump cast to it'll be marked dirty
+            // bump cast so it'll be marked dirty
             mContext.getContentResolver().update(cast, new ContentValues(), null, null);
 
             LocastSyncService.startSync(mContext, cast, true);

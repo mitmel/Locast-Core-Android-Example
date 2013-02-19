@@ -46,7 +46,7 @@
         <!-- when using Google Maps, this is needed -->
         <uses-library android:name="com.google.android.maps" />
 
-        <!-- specify the URL of the site here -->
+        <!-- specify the URL of the site here. Make sure to update the URLs below too. -->
         <meta-data
             android:name="edu.mit.mobile.android.locast.base_url"
             android:value="https://locast.mit.edu/openlocast/api/" />
