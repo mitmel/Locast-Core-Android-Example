@@ -3,3 +3,4 @@ gen/
 .project
 proguard/
 .settings/
+.classpath
