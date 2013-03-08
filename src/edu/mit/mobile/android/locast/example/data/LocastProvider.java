@@ -7,10 +7,13 @@ import android.util.Log;
 import edu.mit.mobile.android.content.ForeignKeyDBHelper;
 import edu.mit.mobile.android.content.GenericDBHelper;
 import edu.mit.mobile.android.content.ProviderUtils;
+import edu.mit.mobile.android.content.SQLGenUtils;
 import edu.mit.mobile.android.content.m2m.M2MDBHelper;
 import edu.mit.mobile.android.locast.data.JSONSyncableIdenticalChildFinder;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.NoPublicPath;
+import edu.mit.mobile.android.locast.data.Tag;
+import edu.mit.mobile.android.locast.data.TaggableWrapper;
 import edu.mit.mobile.android.locast.example.BuildConfig;
 import edu.mit.mobile.android.locast.net.NetworkClient;
 import edu.mit.mobile.android.locast.sync.SyncableProvider;
@@ -26,6 +29,11 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
 
     private String mBaseUrl;
 
+    private final String TAG_TYPE_DIR = ProviderUtils.toDirType(AUTHORITY,
+            SQLGenUtils.toValidName(Tag.class));
+    private final String TAG_TYPE_ITEM = ProviderUtils.toItemType(AUTHORITY,
+            SQLGenUtils.toValidName(Tag.class));
+
     public LocastProvider() {
         super(AUTHORITY, DB_VER);
 
@@ -39,9 +47,22 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
         final M2MDBHelper collectionCasts = new M2MDBHelper(collections, casts,
                 new JSONSyncableIdenticalChildFinder());
 
+        final GenericDBHelper tags = new GenericDBHelper(Tag.class);
+
+        final M2MDBHelper castTags = new M2MDBHelper(casts, tags);
+
+        final M2MDBHelper collectionTags = new M2MDBHelper(collections, tags);
+
+        final TaggableWrapper castsTaggable = new TaggableWrapper(casts, castTags);
+
+        // this needs to be registered, as it won't have its tables created otherwise.
+        registerDBHelper(tags);
+        registerContentItemType(TAG_TYPE_DIR, Tag.class);
+        registerContentItemType(TAG_TYPE_ITEM, Tag.class);
+
         // /cast/
         // /cast/1/
-        addDirAndItemUri(casts, Cast.PATH);
+        addDirAndItemUri(castsTaggable, Cast.PATH);
 
         // /cast/1/media/
         // /cast/1/media/1/
@@ -59,12 +80,26 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
         // /collection/1/cast/1/media/1/
         addChildDirAndItemUri(castsMedia, Collection.PATH + "/#/" + Cast.PATH, CastMedia.PATH);
 
+        // a list of tags for a cast
+        // /cast/1/tags/
+        // /cast/1/tags/1/
+        addChildDirAndItemUri(castTags, Cast.PATH, Tag.PATH);
+
+        // a list of tags for a collection
+        // /collection/1/tags/
+        // /collection/1/tags/1/
+        addChildDirAndItemUri(collectionTags, Collection.PATH, Tag.PATH);
     }
 
     @Override
     public boolean canSync(Uri uri) {
+        final String type = getType(uri);
 
-        return true;
+        if (TAG_TYPE_DIR.equals(type) || TAG_TYPE_ITEM.equals(type)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -139,8 +174,7 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
             if (uri.getPathSegments().size() == 1) {
                 return mBaseUrl + "cast/";
             } else {
-                return getPathFromField(context, getParent(uri),
-                        Collection.COL_CASTS_URI);
+                return getPathFromField(context, getParent(uri), Collection.COL_CASTS_URI);
             }
 
         } else if (CastMedia.TYPE_DIR.equals(type)) {

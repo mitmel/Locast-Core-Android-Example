@@ -9,11 +9,13 @@ import edu.mit.mobile.android.content.ProviderUtils;
 import edu.mit.mobile.android.content.UriPath;
 import edu.mit.mobile.android.content.column.DBColumn;
 import edu.mit.mobile.android.content.column.TextColumn;
+import edu.mit.mobile.android.content.m2m.M2MManager;
 import edu.mit.mobile.android.locast.data.Commentable;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.Locatable;
 import edu.mit.mobile.android.locast.data.PrivatelyAuthorable;
 import edu.mit.mobile.android.locast.data.SyncMap;
+import edu.mit.mobile.android.locast.data.Tag;
 import edu.mit.mobile.android.locast.data.Titled;
 import edu.mit.mobile.android.locast.example.R;
 
@@ -30,6 +32,8 @@ public class Cast extends JsonSyncableItem implements Titled.Columns, PrivatelyA
     public static final String COL_PREVIEW_IMAGE_URL = "preview_url";
 
     public static final ForeignKeyManager CAST_MEDIA = new ForeignKeyManager(CastMedia.class);
+
+    public static final M2MManager TAGS = new M2MManager(Tag.class);
 
     public static final String SORT_ORDER_DEFAULT = COL_CREATED_DATE + " DESC";
 
