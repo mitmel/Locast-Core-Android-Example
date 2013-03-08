@@ -192,6 +192,8 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
             setLocatable(newCast);
         }
 
+        LocastSyncService.startSync(this, newCast, true);
+
         return true;
     }
 
