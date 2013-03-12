@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import android.accounts.Account;
 import android.app.Activity;
@@ -121,7 +122,8 @@ public class CastMediaHelper {
 
     private File createNewMedia(String publicDir, String extension) throws IOException {
         // Create an image file name
-        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+                .format(new Date());
         final String mediaFileName = timeStamp + "_";
         final File outdir = getLocastDir(publicDir);
         outdir.mkdirs();

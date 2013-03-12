@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="Login or Register" />
+        android:text="@string/auth_login_or_register" />
 
     <TextView
         android:id="@+id/welcome_message"
@@ -19,7 +19,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="35dp"
         android:padding="20sp"
-        android:text="Welcome to Open Locast Example!"
+        android:text="@string/auth_welcome_message"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

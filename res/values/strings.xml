@@ -31,5 +31,7 @@
     <string name="delete_cast_media">Delete item</string>
     <string name="delete_cast_media_confirm_message">Delete this item?</string>
     <string name="view_item">View item</string>
+    <string name="auth_login_or_register">Login or Register</string>
+    <string name="auth_welcome_message">Welcome to Open Locast Example!</string>
 
 </resources>
