@@ -26,7 +26,6 @@ import edu.mit.mobile.android.locast.data.NoPublicPath;
 import edu.mit.mobile.android.locast.data.PrivatelyAuthorable;
 import edu.mit.mobile.android.locast.data.SyncException;
 import edu.mit.mobile.android.locast.data.Tag;
-import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.example.data.LocastProvider;
 import edu.mit.mobile.android.locast.net.LocastApplicationCallbacks;
@@ -196,7 +195,7 @@ public class LocastProviderTest extends ProviderTestCase2<LocastProvider> {
 
         assertNotNull(account);
 
-        final String steve = Authenticator.getUserUri(getContext(), account);
+        final String steve = networkClient.getUserUri(account);
 
         assertNotNull(steve);
 

@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.os.Bundle;
 import edu.mit.mobile.android.locast.example.accounts.AuthenticationService;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.net.ClientResponseException;
@@ -27,6 +28,8 @@ import edu.mit.mobile.android.locast.net.NetworkProtocolException;
 public class FakeNetworkClient extends NetworkClient {
 
     public static HashMap<URI, Object> data = new HashMap<URI, Object>();
+
+    private static HashMap<Account, Bundle> mUserData = new HashMap<Account, Bundle>();
 
     private static final String CAST_PATH = "cast/";
 
@@ -81,11 +84,21 @@ public class FakeNetworkClient extends NetworkClient {
         final Account account = new Account(username, Authenticator.ACCOUNT_TYPE);
         final AccountManager am = AccountManager.get(context);
 
-        am.setUserData(account, AuthenticationService.USERDATA_DISPLAY_NAME, userUri);
+        am.setUserData(account, AuthenticationService.USERDATA_DISPLAY_NAME, displayName);
         am.setUserData(account, AuthenticationService.USERDATA_LOCAST_API_URL, "");
         am.setUserData(account, AuthenticationService.USERDATA_USER_URI, userUri);
         am.setUserData(account, AuthenticationService.USERDATA_USERID, "1");
+
+        final Bundle userdata = new Bundle();
+        userdata.putString(AuthenticationService.USERDATA_DISPLAY_NAME, displayName);
+        userdata.putString(AuthenticationService.USERDATA_USER_URI, userUri);
+
+        mUserData.put(account, userdata);
         return account;
+    }
+
+    public String getUserUri(Account user) {
+        return mUserData.get(user).getString(AuthenticationService.USERDATA_USER_URI);
     }
 
     private static URI resolveUrl(String path) {
