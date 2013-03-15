@@ -10,7 +10,10 @@ import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.ActionBar.TabListener;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
+import edu.mit.mobile.android.locast.accounts.AbsLocastAuthenticatorActivity.LogoutHandler;
+import edu.mit.mobile.android.locast.accounts.LogoutFragment;
 import edu.mit.mobile.android.locast.data.Authorable;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.app.CastListFragment;
@@ -47,6 +50,14 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
     }
 
     @Override
+    protected void onDestroy() {
+
+        super.onDestroy();
+
+        mLogoutHandler = null;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -72,6 +83,13 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
     private void showSplashOrMain() {
         mIsLoggedIn = Authenticator.hasRealAccount(this, Authenticator.ACCOUNT_TYPE);
 
+        final LogoutFragment logout = (LogoutFragment) getSupportFragmentManager()
+                .findFragmentByTag("logout");
+
+        if (logout != null && logout.isAdded()) {
+            logout.setOnLogoutHandler(getLogoutHandler());
+        }
+
         if (mIsLoggedIn) {
             showMainScreen();
         } else {
@@ -84,6 +102,7 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
      * Replaces the current fragment with the splash screen. Removes any tabs.
      */
     private void showSplash() {
+
         final FragmentManager fm = getSupportFragmentManager();
         final FragmentTransaction ft = fm.beginTransaction();
         final Fragment f = fm.findFragmentById(android.R.id.content);
@@ -212,8 +231,45 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getSupportMenuInflater().inflate(R.menu.activity_example, menu);
+        getSupportMenuInflater().inflate(R.menu.activity_main, menu);
+        menu.findItem(R.id.logout).setVisible(mIsLoggedIn);
         return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.logout:
+                showLogout();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private LogoutHandler getLogoutHandler() {
+        if (mLogoutHandler == null) {
+            mLogoutHandler = new LogoutHandler(this) {
+
+                @Override
+                public void onAccountRemoved(boolean success) {
+                    if (success) {
+                        showSplashOrMain();
+                    }
+                }
+            };
+            mLogoutHandler.setAccount(Authenticator.getFirstAccount(this,
+                    Authenticator.ACCOUNT_TYPE));
+        }
+
+        return mLogoutHandler;
+    }
+
+    private void showLogout() {
+        LogoutFragment.instantiate(getString(R.string.app_name))
+                .setOnLogoutHandler(getLogoutHandler())
+                .show(getSupportFragmentManager(), "logout");
+    }
+
+    private LogoutHandler mLogoutHandler;
 
 }
