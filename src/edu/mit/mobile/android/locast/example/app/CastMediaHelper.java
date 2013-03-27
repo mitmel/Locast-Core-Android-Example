@@ -21,11 +21,11 @@ import android.widget.Toast;
 import com.google.android.maps.GeoPoint;
 import com.stackoverflow.MediaUtils;
 
-import edu.mit.mobile.android.locast.data.Authorable;
 import edu.mit.mobile.android.locast.data.CastMedia;
 import edu.mit.mobile.android.locast.data.CastMedia.CastMediaInfo;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.MediaProcessingException;
+import edu.mit.mobile.android.locast.data.interfaces.AuthorableUtils;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.sync.LocastSyncService;
@@ -100,7 +100,7 @@ public class CastMediaHelper {
             final Account me = Authenticator.getFirstAccount(mContext, Authenticator.ACCOUNT_TYPE);
             final ContentValues cv = JsonSyncableItem.newContentItem();
 
-            Authorable.putAuthorInformation(mContext, me, cv);
+            AuthorableUtils.putAuthorInformation(mContext, me, cv);
 
             cmi = CastMedia.addMedia(mContext, me, castMedia, content, cv);
             // if the current location is null, infer it from the first media that's added.

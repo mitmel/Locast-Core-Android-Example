@@ -26,16 +26,18 @@ import edu.mit.mobile.android.content.column.DBColumn;
 import edu.mit.mobile.android.content.column.IntegerColumn;
 import edu.mit.mobile.android.content.column.TextColumn;
 import edu.mit.mobile.android.content.m2m.M2MManager;
-import edu.mit.mobile.android.locast.data.Authorable;
-import edu.mit.mobile.android.locast.data.Favoritable;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.SyncMap;
-import edu.mit.mobile.android.locast.data.Titled;
+import edu.mit.mobile.android.locast.data.interfaces.Authorable;
+import edu.mit.mobile.android.locast.data.interfaces.AuthorableUtils;
+import edu.mit.mobile.android.locast.data.interfaces.Favoritable;
+import edu.mit.mobile.android.locast.data.interfaces.FavoritableUtils;
+import edu.mit.mobile.android.locast.data.interfaces.Titled;
+import edu.mit.mobile.android.locast.data.interfaces.TitledUtils;
 import edu.mit.mobile.android.locast.example.R;
 
 @UriPath(Collection.PATH)
-public class Collection extends JsonSyncableItem implements Favoritable.Columns,
-        Authorable.Columns, Titled.Columns {
+public class Collection extends JsonSyncableItem implements Favoritable, Authorable, Titled {
     public final static String PATH = "collection";
 
     public final static Uri CONTENT_URI = ProviderUtils
@@ -84,9 +86,9 @@ public class Collection extends JsonSyncableItem implements Favoritable.Columns,
         public ItemSyncMap() {
             super();
 
-            putAll(Favoritable.SYNC_MAP);
-            putAll(Titled.SYNC_MAP);
-            putAll(Authorable.SYNC_MAP);
+            putAll(FavoritableUtils.SYNC_MAP);
+            putAll(TitledUtils.SYNC_MAP);
+            putAll(AuthorableUtils.SYNC_MAP);
 
             put(COL_CASTS_COUNT, new SyncFieldMap("casts_count", SyncFieldMap.INTEGER,
                     SyncFieldMap.SYNC_FROM));

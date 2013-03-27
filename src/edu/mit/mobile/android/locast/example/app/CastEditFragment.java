@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
-import edu.mit.mobile.android.locast.data.Locatable;
+import edu.mit.mobile.android.locast.data.interfaces.LocatableUtils;
 import edu.mit.mobile.android.locast.data.tags.Tag;
 import edu.mit.mobile.android.locast.example.BuildConfig;
 import edu.mit.mobile.android.locast.example.R;
@@ -178,7 +178,7 @@ public class CastEditFragment extends CastFragment {
             mTitle.setText(c.getString(c.getColumnIndexOrThrow(Cast.COL_TITLE)));
             mDescription.setText(c.getString(c.getColumnIndexOrThrow(Cast.COL_DESCRIPTION)));
             mIsDraft = Cast.isDraft(c);
-            mLocButton.setSavedLocation(Locatable.toLocation(c));
+            mLocButton.setSavedLocation(LocatableUtils.toLocation(c));
             mLocButton.setShowSaved(true);
             mIsLoaded = true;
         }

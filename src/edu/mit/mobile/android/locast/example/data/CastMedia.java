@@ -11,14 +11,15 @@ import android.net.Uri;
 import edu.mit.mobile.android.content.ProviderUtils;
 import edu.mit.mobile.android.content.UriPath;
 import edu.mit.mobile.android.content.column.DBForeignKeyColumn;
-import edu.mit.mobile.android.locast.data.Authorable;
 import edu.mit.mobile.android.locast.data.ResourcesSync;
 import edu.mit.mobile.android.locast.data.SyncMap;
 import edu.mit.mobile.android.locast.data.VideoContent;
+import edu.mit.mobile.android.locast.data.interfaces.Authorable;
+import edu.mit.mobile.android.locast.data.interfaces.AuthorableUtils;
 import edu.mit.mobile.android.locast.net.NetworkProtocolException;
 
 @UriPath(CastMedia.PATH)
-public class CastMedia extends VideoContent implements Authorable.Columns {
+public class CastMedia extends VideoContent implements Authorable {
 
     public static final String PATH = "media";
 
@@ -65,7 +66,7 @@ public class CastMedia extends VideoContent implements Authorable.Columns {
         public ItemSyncMap() {
             // this is where you could put other fields. eg:
             // put(COL_LOCAL_COLUMN, new SyncFieldMap("remote_key", SyncFieldMap.STRING));
-            putAll(Authorable.SYNC_MAP);
+            putAll(AuthorableUtils.SYNC_MAP);
         }
 
         @Override

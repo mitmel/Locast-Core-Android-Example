@@ -9,21 +9,24 @@ import edu.mit.mobile.android.content.ProviderUtils;
 import edu.mit.mobile.android.content.UriPath;
 import edu.mit.mobile.android.content.column.DBColumn;
 import edu.mit.mobile.android.content.column.TextColumn;
-import edu.mit.mobile.android.content.m2m.M2MManager;
-import edu.mit.mobile.android.locast.data.Commentable;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
-import edu.mit.mobile.android.locast.data.Locatable;
-import edu.mit.mobile.android.locast.data.PrivatelyAuthorable;
 import edu.mit.mobile.android.locast.data.SyncMap;
-import edu.mit.mobile.android.locast.data.Titled;
-import edu.mit.mobile.android.locast.data.tags.Tag;
+import edu.mit.mobile.android.locast.data.interfaces.Commentable;
+import edu.mit.mobile.android.locast.data.interfaces.CommentableUtils;
+import edu.mit.mobile.android.locast.data.interfaces.Locatable;
+import edu.mit.mobile.android.locast.data.interfaces.LocatableUtils;
+import edu.mit.mobile.android.locast.data.interfaces.PrivatelyAuthorable;
+import edu.mit.mobile.android.locast.data.interfaces.PrivatelyAuthorableUtils;
+import edu.mit.mobile.android.locast.data.interfaces.Titled;
+import edu.mit.mobile.android.locast.data.interfaces.TitledUtils;
 import edu.mit.mobile.android.locast.data.tags.Taggable;
+import edu.mit.mobile.android.locast.data.tags.TaggableUtils;
 import edu.mit.mobile.android.locast.example.R;
 
 @UriPath(Cast.PATH)
 @DBSortOrder(Cast.SORT_ORDER_DEFAULT)
-public class Cast extends JsonSyncableItem implements Titled.Columns, PrivatelyAuthorable.Columns,
-        Locatable.Columns, Commentable.Columns {
+public class Cast extends JsonSyncableItem implements Titled, PrivatelyAuthorable, Locatable,
+        Commentable, Taggable {
     public final static String TAG = Cast.class.getSimpleName();
 
     @DBColumn(type = TextColumn.class)
@@ -33,8 +36,6 @@ public class Cast extends JsonSyncableItem implements Titled.Columns, PrivatelyA
     public static final String COL_PREVIEW_IMAGE_URL = "preview_url";
 
     public static final ForeignKeyManager CAST_MEDIA = new ForeignKeyManager(CastMedia.class);
-
-    public static final M2MManager TAGS = new M2MManager(Tag.class);
 
     public static final String SORT_ORDER_DEFAULT = COL_CREATED_DATE + " DESC";
 
@@ -59,11 +60,11 @@ public class Cast extends JsonSyncableItem implements Titled.Columns, PrivatelyA
         private static final long serialVersionUID = -2194542380700398098L;
 
         public ItemSyncMap() {
-            putAll(Titled.SYNC_MAP);
-            putAll(PrivatelyAuthorable.SYNC_MAP);
-            putAll(Locatable.SYNC_MAP);
-            putAll(Commentable.SYNC_MAP);
-            putAll(new Taggable.TaggableSyncMap(Cast.TAGS));
+            putAll(TitledUtils.SYNC_MAP);
+            putAll(PrivatelyAuthorableUtils.SYNC_MAP);
+            putAll(LocatableUtils.SYNC_MAP);
+            putAll(CommentableUtils.SYNC_MAP);
+            putAll(new TaggableUtils.TaggableSyncMap(Cast.TAGS));
 
             put(COL_MEDIA_PUBLIC_URL, new SyncChildRelation("media",
                     new SyncChildRelation.SimpleRelationship(CastMedia.PATH),

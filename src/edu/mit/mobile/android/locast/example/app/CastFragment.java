@@ -31,9 +31,9 @@ import edu.mit.mobile.android.imagecache.ImageLoaderAdapter;
 import edu.mit.mobile.android.locast.Constants;
 import edu.mit.mobile.android.locast.app.DeleteDialogFragment;
 import edu.mit.mobile.android.locast.app.DeleteDialogFragment.OnDeleteListener;
-import edu.mit.mobile.android.locast.data.Authorable;
 import edu.mit.mobile.android.locast.data.CastMedia;
-import edu.mit.mobile.android.locast.data.tags.Taggable;
+import edu.mit.mobile.android.locast.data.interfaces.AuthorableUtils;
+import edu.mit.mobile.android.locast.data.tags.TaggableUtils;
 import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
@@ -71,7 +71,7 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
         public void onClick(View v) {
             final String tag = ((TagButton) v).getText().toString();
 
-            startActivity(new Intent(Intent.ACTION_VIEW, Taggable.getItemMatchingTags(
+            startActivity(new Intent(Intent.ACTION_VIEW, TaggableUtils.getItemMatchingTags(
                     Cast.CONTENT_URI, tag)));
         }
     };
@@ -187,7 +187,7 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
                 final String myUserUri = Authenticator.getUserUri(getActivity(),
                         Authenticator.ACCOUNT_TYPE);
 
-                final boolean isEditable = Authorable.canEdit(myUserUri, c);
+                final boolean isEditable = AuthorableUtils.canEdit(myUserUri, c);
 
                 menu.findItem(R.id.delete).setVisible(isEditable);
 

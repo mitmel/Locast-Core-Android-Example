@@ -22,11 +22,11 @@ import android.test.IsolatedContext;
 import android.test.ProviderTestCase2;
 import android.test.mock.MockContentResolver;
 import android.text.TextUtils;
-import edu.mit.mobile.android.locast.data.Authorable;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.NoPublicPath;
-import edu.mit.mobile.android.locast.data.PrivatelyAuthorable;
 import edu.mit.mobile.android.locast.data.SyncException;
+import edu.mit.mobile.android.locast.data.interfaces.Authorable;
+import edu.mit.mobile.android.locast.data.interfaces.PrivatelyAuthorableUtils;
 import edu.mit.mobile.android.locast.data.tags.Tag;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.example.data.LocastProvider;
@@ -52,8 +52,8 @@ public class LocastProviderTest extends ProviderTestCase2<LocastProvider> {
     }
 
     private void addUserCv(ContentValues cv, String uri) {
-        cv.put(Authorable.Columns.COL_AUTHOR, mUsers.get(uri));
-        cv.put(Authorable.Columns.COL_AUTHOR_URI, uri);
+        cv.put(Authorable.COL_AUTHOR, mUsers.get(uri));
+        cv.put(Authorable.COL_AUTHOR_URI, uri);
     }
 
     private Uri createCast(ContentResolver cr, String user, String title) {
@@ -88,8 +88,8 @@ public class LocastProviderTest extends ProviderTestCase2<LocastProvider> {
         assertTrue(c.moveToFirst());
 
         // test authorable
-        assertTrue(PrivatelyAuthorable.canEdit(steve, c));
-        assertFalse(PrivatelyAuthorable.canEdit(nick, c));
+        assertTrue(PrivatelyAuthorableUtils.canEdit(steve, c));
+        assertFalse(PrivatelyAuthorableUtils.canEdit(nick, c));
 
         c.close();
     }
@@ -174,8 +174,7 @@ public class LocastProviderTest extends ProviderTestCase2<LocastProvider> {
         assertTagsMatch(cr, CAST_PROJECTION, Cast.CONTENT_URI, 1, new long[] { cast2Id },
                 new String[] { cast2Title }, "foo");
 
-        assertTagsMatch(cr, CAST_PROJECTION, Cast.CONTENT_URI, 0, null, null,
-                "bar");
+        assertTagsMatch(cr, CAST_PROJECTION, Cast.CONTENT_URI, 0, null, null, "bar");
 
     }
 

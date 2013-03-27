@@ -19,7 +19,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.stackoverflow.ArrayUtils;
 
-import edu.mit.mobile.android.locast.data.PrivatelyAuthorable;
+import edu.mit.mobile.android.locast.data.interfaces.PrivatelyAuthorableUtils;
 import edu.mit.mobile.android.locast.example.BuildConfig;
 import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
@@ -82,7 +82,7 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
 
     @Override
     protected void onCastLoaded(Loader<Cursor> loader, Cursor c) {
-        mCanEdit = PrivatelyAuthorable.canEdit(
+        mCanEdit = PrivatelyAuthorableUtils.canEdit(
                 Authenticator.getUserUri(this, Authenticator.ACCOUNT_TYPE), c);
         setTitle(Cast.getTitle(this, c));
         getSupportActionBar().setSubtitle(c.getString(c.getColumnIndexOrThrow(Cast.COL_AUTHOR)));

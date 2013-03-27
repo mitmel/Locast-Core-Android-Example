@@ -14,7 +14,7 @@ import com.actionbarsherlock.view.MenuItem;
 
 import edu.mit.mobile.android.locast.accounts.AbsLocastAuthenticatorActivity.LogoutHandler;
 import edu.mit.mobile.android.locast.accounts.LogoutFragment;
-import edu.mit.mobile.android.locast.data.Authorable;
+import edu.mit.mobile.android.locast.data.interfaces.AuthorableUtils;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.app.CastListFragment;
 import edu.mit.mobile.android.locast.example.app.CollectionListFragment;
@@ -186,7 +186,7 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
     private Fragment instantiateFragment(String tag) {
         Fragment f;
         if (TAG_MY.equals(tag)) {
-            f = CastListFragment.instantiate(Authorable
+            f = CastListFragment.instantiate(AuthorableUtils
                     .getAuthoredBy(Cast.CONTENT_URI,
                             Authenticator.getUserUri(this, Authenticator.ACCOUNT_TYPE)).buildUpon()
                     .appendQueryParameter(Cast.COL_DRAFT + "!", "1").build());

@@ -25,7 +25,7 @@ import edu.mit.mobile.android.content.ProviderUtils;
 import edu.mit.mobile.android.imagecache.ImageCache;
 import edu.mit.mobile.android.imagecache.ImageCache.OnImageLoadListener;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
-import edu.mit.mobile.android.locast.data.Locatable;
+import edu.mit.mobile.android.locast.data.interfaces.Locatable;
 import edu.mit.mobile.android.locast.example.BuildConfig;
 import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.maps.GoogleStaticMapView;
@@ -34,8 +34,8 @@ import edu.mit.mobile.android.maps.OnMapUpdateListener;
 public abstract class LocatableItemMapActivity extends SherlockFragmentActivity implements
         OnImageLoadListener, OnMapUpdateListener {
 
-    protected static final String[] PROJECTION = new String[] { Locatable.Columns.COL_LATITUDE,
-            Locatable.Columns.COL_LONGITUDE, JsonSyncableItem.COL_DRAFT };
+    protected static final String[] PROJECTION = new String[] { Locatable.COL_LATITUDE,
+            Locatable.COL_LONGITUDE, JsonSyncableItem.COL_DRAFT };
     private static final int LOCATABLE_LOADER = 200;
     private Bundle mLocatableArgs;
 
@@ -278,11 +278,11 @@ public abstract class LocatableItemMapActivity extends SherlockFragmentActivity 
                 case LOCATABLE_LOADER:
 
                     if (c.moveToFirst()) {
-                        final int latCol = c.getColumnIndexOrThrow(Locatable.Columns.COL_LATITUDE);
+                        final int latCol = c.getColumnIndexOrThrow(Locatable.COL_LATITUDE);
                         if (mShowMap && !c.isNull(latCol)) {
                             final float lat = c.getFloat(latCol);
                             final float lon = c.getFloat(c
-                                    .getColumnIndexOrThrow(Locatable.Columns.COL_LONGITUDE));
+                                    .getColumnIndexOrThrow(Locatable.COL_LONGITUDE));
 
                             mMap.setMap(lat, lon, false);
                         }
