@@ -18,6 +18,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -32,10 +33,12 @@ import edu.mit.mobile.android.locast.app.DeleteDialogFragment;
 import edu.mit.mobile.android.locast.app.DeleteDialogFragment.OnDeleteListener;
 import edu.mit.mobile.android.locast.data.Authorable;
 import edu.mit.mobile.android.locast.data.CastMedia;
+import edu.mit.mobile.android.locast.data.tags.Taggable;
 import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.sync.LocastSyncService;
+import edu.mit.mobile.android.locast.widget.TagButton;
 import edu.mit.mobile.android.locast.widget.TagListView;
 import edu.mit.mobile.android.locast.widget.TagsLoaderCallbacks;
 
@@ -62,6 +65,16 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
     // tags
     private TagListView mTags;
     private TagsLoaderCallbacks mTagsLoader;
+    private final OnClickListener mOnTagClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            final String tag = ((TagButton) v).getText().toString();
+
+            startActivity(new Intent(Intent.ACTION_VIEW, Taggable.getItemMatchingTags(
+                    Cast.CONTENT_URI, tag)));
+        }
+    };
 
     protected abstract String[] getCastProjection();
 
@@ -110,6 +123,8 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
         registerForContextMenu(mCastMediaView);
 
         mTags = (TagListView) view.findViewById(R.id.tags);
+
+        mTags.setOnTagClickListener(mOnTagClickListener);
 
         mTagsLoader = new TagsLoaderCallbacks(getActivity(), mTags);
     }

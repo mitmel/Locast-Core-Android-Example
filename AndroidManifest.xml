@@ -91,6 +91,15 @@ android:value="" />
                 <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.cast" />
             </intent-filter>
         </activity>
+        <activity android:name=".app.CastListActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.cast" />
+            </intent-filter>
+        </activity>
 
         <!-- collections -->
 

@@ -34,7 +34,7 @@ public class CollectionDetailActivity extends SherlockFragmentActivity {
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
 
-        setContentView(R.layout.activty_collection_detail);
+        setContentView(R.layout.activity_collection_detail);
 
         if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
             mCollection = getIntent().getData();
