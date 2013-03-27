@@ -12,8 +12,9 @@ import edu.mit.mobile.android.content.m2m.M2MDBHelper;
 import edu.mit.mobile.android.locast.data.JSONSyncableIdenticalChildFinder;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.NoPublicPath;
-import edu.mit.mobile.android.locast.data.Tag;
-import edu.mit.mobile.android.locast.data.TaggableWrapper;
+import edu.mit.mobile.android.locast.data.tags.IdenticalTagFinder;
+import edu.mit.mobile.android.locast.data.tags.Tag;
+import edu.mit.mobile.android.locast.data.tags.TaggableWrapper;
 import edu.mit.mobile.android.locast.example.BuildConfig;
 import edu.mit.mobile.android.locast.net.NetworkClient;
 import edu.mit.mobile.android.locast.sync.SyncableProvider;
@@ -44,16 +45,19 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
 
         final GenericDBHelper collections = new GenericDBHelper(Collection.class);
 
-        final M2MDBHelper collectionCasts = new M2MDBHelper(collections, casts,
-                new JSONSyncableIdenticalChildFinder());
-
         final GenericDBHelper tags = new GenericDBHelper(Tag.class);
 
-        final M2MDBHelper castTags = new M2MDBHelper(casts, tags);
+        final M2MDBHelper castTags = new M2MDBHelper(casts, tags, new IdenticalTagFinder());
 
-        final M2MDBHelper collectionTags = new M2MDBHelper(collections, tags);
+        final M2MDBHelper collectionTags = new M2MDBHelper(collections, tags,
+                new IdenticalTagFinder());
 
         final TaggableWrapper castsTaggable = new TaggableWrapper(casts, castTags);
+
+        final M2MDBHelper collectionCasts = new M2MDBHelper(collections, castsTaggable,
+                new JSONSyncableIdenticalChildFinder());
+
+        final M2MDBHelper collectionCastTags = new M2MDBHelper(collectionCasts, tags, new IdenticalTagFinder());
 
         // this needs to be registered, as it won't have its tables created otherwise.
         registerDBHelper(tags);
@@ -89,6 +93,10 @@ public class LocastProvider extends SyncableSimpleContentProvider implements Syn
         // /collection/1/tags/
         // /collection/1/tags/1/
         addChildDirAndItemUri(collectionTags, Collection.PATH, Tag.PATH);
+
+        // /collection/1/cast/1/tags/
+        // /collection/1/cast/1/tags/1/
+        addChildDirAndItemUri(collectionCastTags, Collection.PATH + "/#/" + Cast.PATH, Tag.PATH);
     }
 
     @Override

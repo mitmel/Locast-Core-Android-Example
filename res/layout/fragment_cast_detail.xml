@@ -1,29 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Cast.Item.Detail"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@android:id/empty"
-        style="@style/Cast.Media.Empty.Detail"
+    <RelativeLayout
+        style="@style/Cast.Item.Detail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/description"
-        android:layout_alignParentBottom="true"
-        android:text="@string/this_cast_has_no_media" />
+        android:layout_height="wrap_content" >
 
-    <Gallery
-        android:id="@+id/cast_media"
-        style="@style/Cast.Media.List.Detail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:id="@android:id/empty"
+            style="@style/Cast.Media.Empty.Detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/description"
+            android:text="@string/this_cast_has_no_media" />
 
-    <TextView
-        android:id="@+id/description"
-        style="@style/Cast.Description.Detail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/cast_media" />
+        <Gallery
+            android:id="@+id/cast_media"
+            style="@style/Cast.Media.List.Detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/description"
+            style="@style/Cast.Description.Detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cast_media"
+            android:textIsSelectable="true" />
+
+        <edu.mit.mobile.android.locast.widget.TagListView
+            android:id="@+id/tags"
+            android:layout_below="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+</ScrollView>

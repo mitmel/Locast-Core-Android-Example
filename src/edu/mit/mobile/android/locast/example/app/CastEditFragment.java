@@ -15,11 +15,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.Locatable;
+import edu.mit.mobile.android.locast.data.tags.Tag;
 import edu.mit.mobile.android.locast.example.BuildConfig;
 import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.locast.example.accounts.AuthenticationService;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
+import edu.mit.mobile.android.locast.widget.TagList;
 import edu.mit.mobile.android.location.IncrementalLocator;
 import edu.mit.mobile.android.widget.LocationButton;
 
@@ -39,6 +41,7 @@ public class CastEditFragment extends CastFragment {
 
     private IncrementalLocator mLocator;
     private LocationButton mLocButton;
+    private TagList mTags;
 
     // stateful
 
@@ -107,6 +110,7 @@ public class CastEditFragment extends CastFragment {
         mDescription = (TextView) view.findViewById(R.id.description);
         mLocButton = (LocationButton) view.findViewById(R.id.location);
         mLocButton.setShowLatLon(false);
+        mTags = (TagList) view.findViewById(R.id.tags);
     }
 
     @Override
@@ -236,6 +240,8 @@ public class CastEditFragment extends CastFragment {
             cv.put(Cast.COL_LATITUDE, location.getLatitude());
             cv.put(Cast.COL_LONGITUDE, location.getLongitude());
         }
+
+        cv.put(Tag.TAGS_SPECIAL_CV_KEY, Tag.toTagQuery(mTags.getTags()));
 
         cv.put(Cast.COL_DRAFT, mIsDraft);
 

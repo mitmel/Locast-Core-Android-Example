@@ -36,6 +36,8 @@ import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.sync.LocastSyncService;
+import edu.mit.mobile.android.locast.widget.TagListView;
+import edu.mit.mobile.android.locast.widget.TagsLoaderCallbacks;
 
 public abstract class CastFragment extends Fragment implements LoaderCallbacks<Cursor> {
 
@@ -47,6 +49,7 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
 
     private static final int LOADER_CAST_MEDIA = 1001;
     private static final String TAG = CastFragment.class.getSimpleName();
+    private static final int LOADER_TAGS = 2000;
 
     private ImageCache mImageCache;
 
@@ -55,6 +58,10 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
     private Uri mCastMedia;
     private Uri mCast;
     private OnDeleteListener mOnDeleteListener;
+
+    // tags
+    private TagListView mTags;
+    private TagsLoaderCallbacks mTagsLoader;
 
     protected abstract String[] getCastProjection();
 
@@ -102,6 +109,16 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
 
         registerForContextMenu(mCastMediaView);
 
+        mTags = (TagListView) view.findViewById(R.id.tags);
+
+        mTagsLoader = new TagsLoaderCallbacks(getActivity(), mTags);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mTagsLoader = null;
     }
 
     protected void restartLoaders() {
@@ -116,6 +133,11 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
             getLoaderManager().restartLoader(LOADER_CAST, loaderArgs, this);
 
             getLoaderManager().restartLoader(LOADER_CAST_MEDIA, loaderArgs, this);
+
+            final Bundle tagsArgs = new Bundle(1);
+            tagsArgs.putParcelable(TagsLoaderCallbacks.ARGS_URI, Cast.TAGS.getUri(castUri));
+
+            getLoaderManager().restartLoader(LOADER_TAGS, tagsArgs, mTagsLoader);
 
             LocastSyncService.startExpeditedAutomaticSync(getActivity(), castUri);
         }
@@ -291,6 +313,7 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
                     }
 
                     loadCastFromCursor(loader, c);
+
                 } else {
                     Log.e(TAG, "could not load content");
                 }

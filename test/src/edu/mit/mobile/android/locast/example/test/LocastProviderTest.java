@@ -2,12 +2,14 @@ package edu.mit.mobile.android.locast.example.test;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.http.client.HttpResponseException;
 import org.json.JSONException;
 
 import android.accounts.Account;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
@@ -25,7 +27,7 @@ import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.NoPublicPath;
 import edu.mit.mobile.android.locast.data.PrivatelyAuthorable;
 import edu.mit.mobile.android.locast.data.SyncException;
-import edu.mit.mobile.android.locast.data.Tag;
+import edu.mit.mobile.android.locast.data.tags.Tag;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.example.data.LocastProvider;
 import edu.mit.mobile.android.locast.net.LocastApplicationCallbacks;
@@ -75,7 +77,6 @@ public class LocastProviderTest extends ProviderTestCase2<LocastProvider> {
     public void testCreateCast() throws JSONException {
         final MockContentResolver cr = getMockContentResolver();
 
-
         final String steve = createUser("Steve P.");
         final String nick = createUser("Nick W.");
 
@@ -93,23 +94,28 @@ public class LocastProviderTest extends ProviderTestCase2<LocastProvider> {
         c.close();
     }
 
+    private static final String[] CAST_PROJECTION = new String[] { Cast._ID, Cast.COL_TITLE };
+
     public void testTags() throws JSONException {
         final MockContentResolver cr = getMockContentResolver();
         final String taggy = createUser("Tag T.");
 
-        final ContentValues cv = JsonSyncableItem.newContentItem();
+        ContentValues cv = JsonSyncableItem.newContentItem();
 
-        addCastCv(cv, taggy, "Tagged Cast");
+        final String cast1Title = "Tagged Cast";
+        addCastCv(cv, taggy, cast1Title);
 
         cv.put(Tag.TAGS_SPECIAL_CV_KEY, "foo,bar");
 
-        final Uri cast = cr.insert(Cast.CONTENT_URI, cv);
+        final Uri cast1 = cr.insert(Cast.CONTENT_URI, cv);
 
-        assertNotNull(cast);
+        assertNotNull(cast1);
+
+        final long cast1Id = ContentUris.parseId(cast1);
 
         Cursor c;
 
-        c = cr.query(cast, null, null, null, null);
+        c = cr.query(cast1, null, null, null, null);
 
         try {
             assertTrue(c.moveToFirst());
@@ -120,38 +126,73 @@ public class LocastProviderTest extends ProviderTestCase2<LocastProvider> {
             c.close();
         }
 
-        // one item should match
-        c = queryTags(cr, Cast.CONTENT_URI, "foo");
+        assertTagsMatch(cr, CAST_PROJECTION, Cast.CONTENT_URI, 1,
+                new long[] { ContentUris.parseId(cast1) }, new String[] { cast1Title }, "foo");
 
+        assertTagsMatch(cr, CAST_PROJECTION, Cast.CONTENT_URI, 1,
+                new long[] { ContentUris.parseId(cast1) }, new String[] { cast1Title }, "foo",
+                "bar");
+
+        assertTagsMatch(cr, CAST_PROJECTION, Cast.CONTENT_URI, 0, null, null, "foo", "baz");
+
+        cv = JsonSyncableItem.newContentItem();
+
+        final String cast2Title = "Tagged Cast 2";
+        addCastCv(cv, taggy, cast2Title);
+
+        cv.put(Tag.TAGS_SPECIAL_CV_KEY, "foo,baz");
+
+        final Uri cast2 = cr.insert(Cast.CONTENT_URI, cv);
+
+        assertNotNull(cast2);
+
+        final long cast2Id = ContentUris.parseId(cast2);
+
+        assertTagsMatch(cr, CAST_PROJECTION, Cast.CONTENT_URI, 1,
+                new long[] { ContentUris.parseId(cast2) }, new String[] { cast2Title }, "baz");
+
+        assertTagsMatch(cr, CAST_PROJECTION, Cast.CONTENT_URI, 2,
+                new long[] { ContentUris.parseId(cast1), ContentUris.parseId(cast2) },
+                new String[] { cast1Title, cast2Title }, "foo");
+
+        assertTagsMatch(cr, CAST_PROJECTION, Cast.CONTENT_URI, 1,
+                new long[] { ContentUris.parseId(cast2) }, new String[] { cast2Title }, "foo",
+                "baz");
+
+        // now replace the tags for one item with a new tag
+        final ContentValues cv2 = new ContentValues();
+        final HashSet<String> tags = new HashSet<String>();
+        tags.add("newtag1");
+        cv2.put(Tag.TAGS_SPECIAL_CV_KEY, Tag.toTagQuery(tags));
+        cr.update(cast1, cv2, null, null);
+
+        assertTagsMatch(cr, CAST_PROJECTION, Cast.CONTENT_URI, 1,
+                new long[] { ContentUris.parseId(cast1) }, new String[] { cast1Title }, "newtag1");
+
+        // as the tags have been updated, these shouldn't match this cast anymore
+
+        assertTagsMatch(cr, CAST_PROJECTION, Cast.CONTENT_URI, 1, new long[] { cast2Id },
+                new String[] { cast2Title }, "foo");
+
+        assertTagsMatch(cr, CAST_PROJECTION, Cast.CONTENT_URI, 0, null, null,
+                "bar");
+
+    }
+
+    private void assertTagsMatch(ContentResolver cr, String[] projection, Uri contentDir,
+            int expectedCount, long[] expectedIds, String[] expectedTitles, String... tag) {
+
+        final Cursor c = queryTags(cr, projection, contentDir, tag);
+
+        int i = 0;
         try {
-            assertTrue(c.moveToFirst());
+            assertEquals(expectedCount, c.getCount());
 
-            assertEquals(1, c.getCount());
-
-        } finally {
-            c.close();
-        }
-
-        // one item should match
-        c = queryTags(cr, Cast.CONTENT_URI, "foo", "bar");
-
-        try {
-            assertTrue(c.moveToFirst());
-
-            assertEquals(1, c.getCount());
-
-        } finally {
-            c.close();
-        }
-
-        // shouldn't return anything
-        c = queryTags(cr, Cast.CONTENT_URI, "foo", "baz");
-
-        try {
-            assertFalse(c.moveToFirst());
-
-            assertEquals(0, c.getCount());
-
+            while (c.moveToNext()) {
+                assertEquals(expectedIds[i], c.getLong(c.getColumnIndex(Cast._ID)));
+                assertEquals(expectedTitles[i], c.getString(c.getColumnIndex(Cast.COL_TITLE)));
+                i++;
+            }
         } finally {
             c.close();
         }
@@ -175,10 +216,11 @@ public class LocastProviderTest extends ProviderTestCase2<LocastProvider> {
         }
     }
 
-    private Cursor queryTags(ContentResolver cr, Uri taggableDir, String... tags) {
+    private Cursor queryTags(ContentResolver cr, String[] projection, Uri taggableDir,
+            String... tags) {
         return cr.query(
                 taggableDir.buildUpon().appendQueryParameter("tags", TextUtils.join(",", tags))
-                        .build(), null, null, null, null);
+                        .build(), projection, null, null, null);
     }
 
     public void testSyncEngine() throws HttpResponseException, RemoteException, SyncException,
@@ -187,7 +229,6 @@ public class LocastProviderTest extends ProviderTestCase2<LocastProvider> {
         // set up a mock context
         final LocastProvider provider = getProvider();
         final Context context = getMockContext();
-
 
         final FakeNetworkClient networkClient = new FakeNetworkClient(getContext(), "Steve P.",
                 "spomeroy@mit.edu");
@@ -208,7 +249,6 @@ public class LocastProviderTest extends ProviderTestCase2<LocastProvider> {
 
         Cast c;
         c = new Cast(provider.query(Cast.CONTENT_URI, null, null, null, null));
-
 
         assertEquals(0, c.getCount());
 

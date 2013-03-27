@@ -50,7 +50,12 @@
             android:id="@+id/location"
             style="@style/Cast.Location"
             android:layout_width="match_parent"
-            android:minLines="2"
+            android:layout_height="wrap_content"
+            android:minLines="2" />
+
+        <edu.mit.mobile.android.locast.widget.TagList
+            android:id="@+id/tags"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
 

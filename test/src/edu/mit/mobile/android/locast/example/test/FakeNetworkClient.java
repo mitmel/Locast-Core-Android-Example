@@ -119,6 +119,7 @@ public class FakeNetworkClient extends NetworkClient {
         jo.put("uri", castUri.getPath());
         jo.put("media", castUri.resolve(CAST_MEDIA_PATH).getPath());
         jo.put("privacy", "protected");
+        jo.put("tags", new JSONArray());
 
         jo.put("resources", new JSONArray());
 

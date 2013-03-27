@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.locast.example.data.Cast;
+import edu.mit.mobile.android.locast.widget.TagListView;
 
 public class CastDetailFragment extends CastFragment {
 
@@ -25,10 +26,19 @@ public class CastDetailFragment extends CastFragment {
         return f;
     }
 
+    private TagListView mTags;
+
     @Override
     protected View onCreateCastFragmentView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_cast_detail, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mTags = (TagListView) view.findViewById(R.id.tags);
     }
 
     @Override
@@ -42,6 +52,7 @@ public class CastDetailFragment extends CastFragment {
 
         ((TextView) v.findViewById(R.id.description)).setText(c.getString(c
                 .getColumnIndexOrThrow(Cast.COL_DESCRIPTION)));
+
     }
 
 }

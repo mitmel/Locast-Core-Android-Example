@@ -15,8 +15,9 @@ import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.Locatable;
 import edu.mit.mobile.android.locast.data.PrivatelyAuthorable;
 import edu.mit.mobile.android.locast.data.SyncMap;
-import edu.mit.mobile.android.locast.data.Tag;
 import edu.mit.mobile.android.locast.data.Titled;
+import edu.mit.mobile.android.locast.data.tags.Tag;
+import edu.mit.mobile.android.locast.data.tags.Taggable;
 import edu.mit.mobile.android.locast.example.R;
 
 @UriPath(Cast.PATH)
@@ -62,6 +63,7 @@ public class Cast extends JsonSyncableItem implements Titled.Columns, PrivatelyA
             putAll(PrivatelyAuthorable.SYNC_MAP);
             putAll(Locatable.SYNC_MAP);
             putAll(Commentable.SYNC_MAP);
+            putAll(new Taggable.TaggableSyncMap(Cast.TAGS));
 
             put(COL_MEDIA_PUBLIC_URL, new SyncChildRelation("media",
                     new SyncChildRelation.SimpleRelationship(CastMedia.PATH),
