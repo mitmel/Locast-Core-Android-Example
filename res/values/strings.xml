@@ -33,5 +33,10 @@
     <string name="view_item">View item</string>
     <string name="auth_login_or_register">Login or Register</string>
     <string name="auth_welcome_message">Welcome to Open Locast Example!</string>
+    <string name="title_activity_cast_list_all">All Casts</string>
+    <string name="title_activity_cast_list_tags">%1$s Casts</string>
+    <string name="title_activity_cast_list_tags_comma">, </string>
+    <string name="title_activity_cast_list_tags_and">and </string>
+    <string name="title_activity_cast_list_tags_quote">’%1$s‘</string>
 
 </resources>
