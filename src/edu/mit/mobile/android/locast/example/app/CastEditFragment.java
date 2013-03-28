@@ -21,7 +21,6 @@ import edu.mit.mobile.android.locast.example.R;
 import edu.mit.mobile.android.locast.example.accounts.AuthenticationService;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
-import edu.mit.mobile.android.locast.widget.TagList;
 import edu.mit.mobile.android.location.IncrementalLocator;
 import edu.mit.mobile.android.widget.LocationButton;
 
@@ -41,7 +40,6 @@ public class CastEditFragment extends CastFragment {
 
     private IncrementalLocator mLocator;
     private LocationButton mLocButton;
-    private TagList mTags;
 
     // stateful
 
@@ -110,7 +108,6 @@ public class CastEditFragment extends CastFragment {
         mDescription = (TextView) view.findViewById(R.id.description);
         mLocButton = (LocationButton) view.findViewById(R.id.location);
         mLocButton.setShowLatLon(false);
-        mTags = (TagList) view.findViewById(R.id.tags);
     }
 
     @Override

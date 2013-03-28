@@ -96,9 +96,11 @@
     <style name="Locatable.Map.Frame">
         <item name="android:foreground">@drawable/map_overshadow_pointer</item>
     </style>
-    
+
     <style name="Cast.Location" parent="@style/LocationButton">
         <item name="android:padding">@dimen/padding_medium</item>
     </style>
+
+    <style name="Widget.TagList.TagButton.Locast"></style>
 
 </resources>

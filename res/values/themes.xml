@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="Theme.Sherlock.Light.DarkActionBar" />
+    <style name="AppTheme" parent="Theme.Sherlock.Light.DarkActionBar">
+        <item name="taglist_tagbutton_style">@style/Widget.TagList.TagButton.Locast</item>
+        <item name="taglist_add_button_style">@style/Widget.TagList.TagAdd</item>
+    </style>
 
 </resources>
