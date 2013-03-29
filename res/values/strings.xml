@@ -9,6 +9,8 @@
     <string name="untitled"><i>untitled</i></string>
     <string name="main_tab_whats_new">What\'s new</string>
     <string name="main_tab_collections">Collections</string>
+    <string name="main_tab_nearby">Nearby</string>
+    <string name="main_tab_unpublished">Unpublished</string>
     <string name="err_unhandled_intent">Error: cannot handle this type of data</string>
     <string name="edit">Edit</string>
     <string name="done">Done</string>

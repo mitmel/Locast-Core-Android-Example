@@ -17,6 +17,7 @@ import edu.mit.mobile.android.locast.accounts.LogoutFragment;
 import edu.mit.mobile.android.locast.data.interfaces.AuthorableUtils;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.app.CastListFragment;
+import edu.mit.mobile.android.locast.example.app.CastMapFragment;
 import edu.mit.mobile.android.locast.example.app.CollectionListFragment;
 import edu.mit.mobile.android.locast.example.app.NoAccountFragment;
 import edu.mit.mobile.android.locast.example.app.OnRefreshListener;
@@ -139,10 +140,18 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
         final ActionBar actionBar = getSupportActionBar();
         if (ActionBar.NAVIGATION_MODE_TABS != actionBar.getNavigationMode()) {
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
             actionBar.addTab(actionBar.newTab().setText(R.string.main_tab_whats_new)
                     .setTabListener(this).setTag(TAG_NEW));
+
+            actionBar.addTab(actionBar.newTab().setText(R.string.main_tab_nearby)
+                    .setTabListener(this).setTag(TAG_NEARBY));
+
             actionBar.addTab(actionBar.newTab().setText(R.string.main_tab_collections)
                     .setTabListener(this).setTag(TAG_COLLECTIONS));
+
+            actionBar.addTab(actionBar.newTab().setText(R.string.main_tab_unpublished)
+                    .setTabListener(this).setTag(TAG_UNPUBLISHED));
 
             if (mRestoreTab != TAB_NONE_SELECTED) {
                 actionBar.setSelectedNavigationItem(mRestoreTab);
@@ -189,19 +198,23 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
             f = CastListFragment.instantiate(AuthorableUtils
                     .getAuthoredBy(Cast.CONTENT_URI,
                             Authenticator.getUserUri(this, Authenticator.ACCOUNT_TYPE)).buildUpon()
-                    .appendQueryParameter(Cast.COL_DRAFT + "!", "1").build());
+                    .query(Collection.COL_DRAFT + "!=1").build());
 
         } else if (TAG_NEW.equals(tag)) {
             f = CastListFragment.instantiate(Cast.CONTENT_URI.buildUpon()
-                    .appendQueryParameter(Cast.COL_DRAFT + "!", "1").build());
+                    .query(Collection.COL_DRAFT + "!=1").build());
+
+        } else if (TAG_NEARBY.equals(tag)) {
+            f = CastMapFragment.instantiate(Cast.CONTENT_URI.buildUpon()
+                    .query(Cast.COL_DRAFT + "!=1").build());
 
         } else if (TAG_UNPUBLISHED.equals(tag)) {
             f = CastListFragment.instantiate(Cast.CONTENT_URI.buildUpon()
-                    .appendQueryParameter(Cast.COL_DRAFT, "1").build());
+                    .query(Cast.COL_DRAFT + "=1").build());
 
         } else if (TAG_COLLECTIONS.equals(tag)) {
             f = CollectionListFragment.instantiate(Collection.CONTENT_URI.buildUpon()
-                    .appendQueryParameter(Collection.COL_DRAFT + "!", "1").build());
+                    .query(Collection.COL_DRAFT + "!=1").build());
 
         } else {
             throw new IllegalArgumentException("cannot instantiate fragment for tag " + tag);
@@ -266,8 +279,7 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
 
     private void showLogout() {
         LogoutFragment.instantiate(getString(R.string.app_name))
-                .setOnLogoutHandler(getLogoutHandler())
-                .show(getSupportFragmentManager(), "logout");
+                .setOnLogoutHandler(getLogoutHandler()).show(getSupportFragmentManager(), "logout");
     }
 
     private LogoutHandler mLogoutHandler;

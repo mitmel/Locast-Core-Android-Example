@@ -18,7 +18,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.maps.GeoPoint;
 import com.stackoverflow.MediaUtils;
 
 import edu.mit.mobile.android.locast.data.CastMedia;
@@ -138,10 +137,6 @@ public class CastMediaHelper {
 
     public void setLocation(Location location) {
         mLocation = location;
-    }
-
-    public void setLocation(GeoPoint location) {
-        mLocation = new Location("manual");
     }
 
     public Location getLocation() {

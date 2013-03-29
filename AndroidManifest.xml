@@ -35,6 +35,24 @@
 
     <uses-feature android:name="android.hardware.camera" />
 
+    <!-- Google Maps API v2 -->
+
+    <permission
+        android:name="edu.mit.mobile.android.locast.example.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="edu.mit.mobile.android.locast.example.permission.MAPS_RECEIVE" />
+
+    <!-- Needed? -->
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
+    <!-- Maps API needs OpenGL ES 2.0. -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <!-- end Google Maps API -->
+
     <application
         android:name="edu.mit.mobile.android.locast.app.LocastApplication"
         android:allowBackup="true"
@@ -43,13 +61,16 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
-        <!-- when using Google Maps, this is needed -->
-        <uses-library android:name="com.google.android.maps" />
-
         <!-- specify the URL of the site here. Make sure to update the URLs below too. -->
         <meta-data
             android:name="edu.mit.mobile.android.locast.base_url"
             android:value="https://locast.mit.edu/openlocast/api/" />
+
+        <!-- Google Maps API v2 -->
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="" />
+        <!-- end Google Maps API v2 -->
 
         <meta-data
             android:name="edu.mit.mobile.android.maps.GOOGLE_STATIC_MAPS_API_KEY"
