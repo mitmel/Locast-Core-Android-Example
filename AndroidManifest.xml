@@ -58,23 +58,24 @@
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
+        android:logo="@drawable/ic_ab_logo"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
         <!-- specify the URL of the site here. Make sure to update the URLs below too. -->
         <meta-data
             android:name="edu.mit.mobile.android.locast.base_url"
-            android:value="https://locast.mit.edu/openlocast/api/" />
+            android:value="https://locast.mit.edu/misti/api/" />
 
         <!-- Google Maps API v2 -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="" />
+            android:value="AIzaSyDMnkGiDVHeJke0LeUYrQaer-5WWNufE3E" />
         <!-- end Google Maps API v2 -->
 
         <meta-data
             android:name="edu.mit.mobile.android.maps.GOOGLE_STATIC_MAPS_API_KEY"
-android:value="" />
+            android:value="AIzaSyCwsqICZkUnU8bC8E41ZHVj6OcXObDjwc0" />
 
         <activity
             android:name=".ExampleActivity"
@@ -178,22 +179,22 @@ android:value="" />
 
                 <!-- http[s]://mel-pydev.mit.edu/openlocast/api/ -->
                 <data
-                    android:host="mel-pydev.mit.edu"
-                    android:pathPrefix="/openlocast/api/"
+                    android:host="mel-prod.media.mit.edu"
+                    android:pathPrefix="/misti/api/"
                     android:scheme="http" />
                 <data
-                    android:host="mel-pydev.mit.edu"
-                    android:pathPrefix="/openlocast/api/"
+                    android:host="mel-prod.media.mit.edu"
+                    android:pathPrefix="/misti/api/"
                     android:scheme="https" />
 
-                <!-- http[s]://locast.mit.edu/openlocast/api/ -->
+                <!-- http[s]://locast.mit.edu/misti/api/ -->
                 <data
                     android:host="locast.mit.edu"
-                    android:pathPrefix="/openlocast/api/"
+                    android:pathPrefix="/misti/api/"
                     android:scheme="http" />
                 <data
                     android:host="locast.mit.edu"
-                    android:pathPrefix="/openlocast/api/"
+                    android:pathPrefix="/misti/api/"
                     android:scheme="https" />
             </intent-filter>
 

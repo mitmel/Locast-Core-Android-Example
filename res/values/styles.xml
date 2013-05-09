@@ -1,5 +1,9 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <style name="AppTheme.ActionBar" parent="Widget.Sherlock.Light.ActionBar">
+        <item name="displayOptions">showHome|useLogo</item>
+    </style>
+
     <style name="Image">
         <item name="android:background">@android:drawable/picture_frame</item>
         <item name="android:layout_margin">@dimen/padding_medium</item>
