@@ -256,4 +256,9 @@ public class FakeNetworkClient extends NetworkClient {
         return null;
     }
 
+	public static void clearData() {
+		data.clear();
+		mUserData.clear();
+	}
+
 }
