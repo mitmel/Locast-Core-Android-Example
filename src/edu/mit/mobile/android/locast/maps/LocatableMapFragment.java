@@ -44,6 +44,8 @@ import edu.mit.mobile.android.locast.data.interfaces.Titled;
 public class LocatableMapFragment extends SupportMapFragment implements OnMarkerClickListener,
         OnInfoWindowClickListener {
 
+	public static final String ARG_SHOW_MY_LOCATION = "edu.mit.mobile.android.livingpostcards.app.ARG_SHOW_MY_LOCATION";
+
     /**
      * Pass this a {@link Uri} of the dir of some items that are {@link Locatable} and
      * {@link Titled}.

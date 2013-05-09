@@ -36,10 +36,8 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.stackoverflow.ArrayUtils;
 
 import edu.mit.mobile.android.imagecache.ImageCache;
@@ -51,9 +49,7 @@ import edu.mit.mobile.android.locast.maps.LocatableMapFragment;
 public class CastMapFragment extends LocatableMapFragment {
 
     public static String[] CAST_PROJECTION = ArrayUtils.concat(LocatableMapFragment.PROJECTION,
-            new String[] { Cast.COL_PREVIEW_IMAGE_URL, Cast.COL_PRIVACY });
-
-    public static final String ARG_SHOW_MY_LOCATION = "edu.mit.mobile.android.livingpostcards.app.ARG_SHOW_MY_LOCATION";
+			new String[] { Cast.COL_PREVIEW_IMAGE_URL, Cast.COL_PRIVACY, Cast.COL_AUTHOR });
 
     private static final String TAG = CastMapFragment.class.getSimpleName();
 
@@ -146,7 +142,7 @@ public class CastMapFragment extends LocatableMapFragment {
         }
 
         mInfoWindowAdapter = new CastInfoWindowAdapter(getActivity(), this);
-        map.setInfoWindowAdapter(mInfoWindowAdapter);
+		map.setInfoWindowAdapter(mInfoWindowAdapter);
 
         // the map doesn't automatically snap to our current location, so we need to do that
         // somehow.
@@ -166,15 +162,6 @@ public class CastMapFragment extends LocatableMapFragment {
     @Override
     protected String[] getProjection() {
         return CAST_PROJECTION;
-    }
-
-    @Override
-    protected MarkerOptions getMarker(Cursor c) {
-        final MarkerOptions mo = super.getMarker(c);
-
-        mo.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_placemark));
-
-        return mo;
     }
 
     public static class CastInfoWindowAdapter implements InfoWindowAdapter {

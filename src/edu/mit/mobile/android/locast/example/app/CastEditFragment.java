@@ -238,7 +238,7 @@ public class CastEditFragment extends CastFragment {
             cv.put(Cast.COL_LONGITUDE, location.getLongitude());
         }
 
-        cv.put(Tag.TAGS_SPECIAL_CV_KEY, Tag.toTagQuery(mTags.getTags()));
+		cv.put(Tag.TAGS_SPECIAL_CV_KEY, Tag.toTagQuery(mTags.getTags()));
 
         cv.put(Cast.COL_DRAFT, mIsDraft);
 
