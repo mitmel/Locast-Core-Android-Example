@@ -34,215 +34,229 @@ import edu.mit.mobile.android.locast.sync.LocastSyncService;
  * {@link #takeVideo()} which will fire off the appropriate intents needed to record a picture
  * and/or video. To use, hook into your activity's lifecycle as described in
  * {@link #CastMediaHelper(Activity, Bundle, Uri)}.
- *
+ * 
  * @author <a href="mailto:spomeroy@mit.edu">Steve Pomeroy</a>
- *
+ * 
  */
 public class CastMediaHelper {
 
-    private static final String TAG = CastMediaHelper.class.getSimpleName();
+	private static final String TAG = CastMediaHelper.class.getSimpleName();
 
-    private static final int REQUEST_NEW_PHOTO = 100;
+	private static final int REQUEST_NEW_PHOTO = 100;
 
-    private static final int REQUEST_NEW_VIDEO = 101;
+	private static final int REQUEST_NEW_VIDEO = 101;
 
-    private static final int REQUEST_PICK_MEDIA = 102;
+	private static final int REQUEST_PICK_MEDIA = 102;
 
-    private static final String PUBLIC_LOCAST_DIR = "locast";
+	private static final String PUBLIC_LOCAST_DIR = "locast";
 
-    private static final String INSTANCE_CREATED_MEDIA_FILE = "edu.mit.mobile.android.locast.example.INSTANCE_CREATED_MEDIA_FILE";
-    private static final String INSTANCE_CAST_LOCATION = "edu.mit.mobile.android.locast.example.INSTANCE_CAST_LOCATION";
+	private static final String INSTANCE_CREATED_MEDIA_FILE = "edu.mit.mobile.android.locast.example.INSTANCE_CREATED_MEDIA_FILE";
+	private static final String INSTANCE_CAST_LOCATION = "edu.mit.mobile.android.locast.example.INSTANCE_CAST_LOCATION";
 
-    private final Activity mContext;
+	private final Activity mContext;
 
-    private Location mLocation;
+	private Location mLocation;
 
-    // stateful
-    private File mCreatedMediaFile;
+	// stateful
+	private File mCreatedMediaFile;
 
-    /**
-     * Hook this in by calling {@link #onSaveInstanceState(Bundle)} and
-     * {@link #onActivityResult(int, int, Intent)} from your activity's equivalent methods.
-     *
-     * @param context
-     * @param args
-     *            arguments from the activity's onCreate()
-     * @param cast
-     */
-    public CastMediaHelper(Activity context, Bundle args) {
-        mContext = context;
+	/**
+	 * Hook this in by calling {@link #onSaveInstanceState(Bundle)} and
+	 * {@link #onActivityResult(int, int, Intent)} from your activity's equivalent methods.
+	 * 
+	 * @param context
+	 * @param args
+	 *            arguments from the activity's onCreate()
+	 * @param cast
+	 */
+	public CastMediaHelper(Activity context, Bundle args) {
+		mContext = context;
 
-        if (args != null) {
-            mCreatedMediaFile = (File) args.getSerializable(INSTANCE_CREATED_MEDIA_FILE);
-            mLocation = args.getParcelable(INSTANCE_CAST_LOCATION);
-        }
-    }
+		if (args != null) {
+			mCreatedMediaFile = (File) args.getSerializable(INSTANCE_CREATED_MEDIA_FILE);
+			mLocation = args.getParcelable(INSTANCE_CAST_LOCATION);
+		}
+	}
 
-    protected void onSaveInstanceState(Bundle outState) {
+	protected void onSaveInstanceState(Bundle outState) {
 
-        outState.putSerializable(INSTANCE_CREATED_MEDIA_FILE, mCreatedMediaFile);
-        outState.putParcelable(INSTANCE_CAST_LOCATION, mLocation);
-    }
+		outState.putSerializable(INSTANCE_CREATED_MEDIA_FILE, mCreatedMediaFile);
+		outState.putParcelable(INSTANCE_CAST_LOCATION, mLocation);
+	}
 
-    /**
-     * Adds the provided media to the cast. If there's location information associated with this
-     * media file and there is no current location set, it will be added. This will show a toast if
-     * there is a problem.
-     *
-     * @param content
-     */
-    public void addMedia(Uri cast, Uri content) {
-        final Uri castMedia = Cast.CAST_MEDIA.getUri(cast);
+	/**
+	 * Adds the provided media to the cast. If there's location information associated with this
+	 * media file and there is no current location set, it will be added. This will show a toast if
+	 * there is a problem.
+	 * 
+	 * @param content
+	 */
+	public void addMedia(Uri cast, Uri content) {
+		final Uri castMedia = Cast.CAST_MEDIA.getUri(cast);
 
-        CastMediaInfo cmi;
-        try {
-            final Account me = Authenticator.getFirstAccount(mContext, Authenticator.ACCOUNT_TYPE);
-            final ContentValues cv = JsonSyncableItem.newContentItem();
+		CastMediaInfo cmi;
+		try {
+			final Account me = Authenticator.getFirstAccount(mContext, Authenticator.ACCOUNT_TYPE);
+			final ContentValues cv = JsonSyncableItem.newContentItem();
 
-            AuthorableUtils.putAuthorInformation(mContext, me, cv);
+			AuthorableUtils.putAuthorInformation(mContext, me, cv);
 
-            cmi = CastMedia.addMedia(mContext, me, castMedia, content, cv);
-            // if the current location is null, infer it from the first media that's added.
-            if (mLocation == null && cmi.location != null) {
-                setLocation(cmi.location);
-            }
+			cmi = CastMedia.addMedia(mContext, me, castMedia, content, cv);
+			// if the current location is null, infer it from the first media that's added.
+			if (mLocation == null && cmi.location != null) {
+				setLocation(cmi.location);
+			}
 
-            // bump cast so it'll be marked dirty
-            mContext.getContentResolver().update(cast, new ContentValues(), null, null);
+			// bump cast so it'll be marked dirty
+			mContext.getContentResolver().update(cast, new ContentValues(), null, null);
 
-            LocastSyncService.startSync(mContext, cast, true);
-        } catch (final MediaProcessingException e) {
-            Log.e(TAG, "could not add media", e);
-            // TODO translate
-            Toast.makeText(mContext, "Unable to add media: " + e.getLocalizedMessage(),
-                    Toast.LENGTH_LONG).show();
-        }
-    }
+			LocastSyncService.startSync(mContext, cast, true);
+		} catch (final MediaProcessingException e) {
+			Log.e(TAG, "could not add media", e);
+			// TODO translate
+			Toast.makeText(mContext, "Unable to add media: " + e.getLocalizedMessage(),
+					Toast.LENGTH_LONG).show();
+		}
+	}
 
-    private File createNewMedia(String publicDir, String extension) throws IOException {
-        // Create an image file name
-        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
-                .format(new Date());
-        final String mediaFileName = timeStamp + "_";
-        final File outdir = getLocastDir(publicDir);
-        outdir.mkdirs();
-        final File image = File.createTempFile(mediaFileName, "." + extension, outdir);
+	private File createNewMedia(String publicDir, String extension) throws IOException {
+		// Create an image file name
+		final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+				.format(new Date());
+		final String mediaFileName = timeStamp + "_";
+		final File outdir = getLocastDir(publicDir);
+		outdir.mkdirs();
+		final File image = File.createTempFile(mediaFileName, "." + extension, outdir);
 
-        return image;
-    }
+		return image;
+	}
 
-    private File getLocastDir(String publicDir) {
-        return new File(Environment.getExternalStoragePublicDirectory(publicDir), PUBLIC_LOCAST_DIR);
-    }
+	private File getLocastDir(String publicDir) {
+		return new File(Environment.getExternalStoragePublicDirectory(publicDir), PUBLIC_LOCAST_DIR);
+	}
 
-    public void setLocation(Location location) {
-        mLocation = location;
-    }
+	public void setLocation(Location location) {
+		mLocation = location;
+	}
 
-    public Location getLocation() {
-        return mLocation;
-    }
+	public Location getLocation() {
+		return mLocation;
+	}
 
-    /**
-     * <p>
-     * Takes a video, adding it to this helper's cast.
-     * </p>
-     * <p>
-     * This uses {@link Activity#startActivityForResult(Intent, int)}, so make sure to call
-     * {@link #onActivityResult(int, int, Intent)} from your activity.
-     * </p>
-     */
-    public void takeVideo() {
+	/**
+	 * <p>
+	 * Takes a video, adding it to this helper's cast.
+	 * </p>
+	 * <p>
+	 * This uses {@link Activity#startActivityForResult(Intent, int)}, so make sure to call
+	 * {@link #onActivityResult(int, int, Intent)} from your activity.
+	 * </p>
+	 */
+	public void takeVideo() {
 
-        final Intent i = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        try {
-            mCreatedMediaFile = createNewMedia(Environment.DIRECTORY_MOVIES, "mp4");
-            i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCreatedMediaFile));
-            i.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // high quality
+		final Intent i = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+		try {
+			mCreatedMediaFile = createNewMedia(Environment.DIRECTORY_MOVIES, "mp4");
+			i.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCreatedMediaFile));
+			i.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // high quality
 
-            mContext.startActivityForResult(i, REQUEST_NEW_VIDEO);
-        } catch (final IOException e) {
-            Log.e(TAG, "error making temporary file", e);
-        }
-    }
+			mContext.startActivityForResult(i, REQUEST_NEW_VIDEO);
+		} catch (final IOException e) {
+			Log.e(TAG, "error making temporary file", e);
+		}
+	}
 
-    /**
-     * <p>
-     * Takes a picture, adding it to this helper's cast.
-     * </p>
-     * <p>
-     * This uses {@link Activity#startActivityForResult(Intent, int)}, so make sure to call
-     * {@link #onActivityResult(int, int, Intent)} from your activity.
-     * </p>
-     */
-    public void takePicture() {
-        Intent i2;
-        try {
+	/**
+	 * <p>
+	 * Takes a picture, adding it to this helper's cast.
+	 * </p>
+	 * <p>
+	 * This uses {@link Activity#startActivityForResult(Intent, int)}, so make sure to call
+	 * {@link #onActivityResult(int, int, Intent)} from your activity.
+	 * </p>
+	 */
+	public void takePicture() {
+		Intent i2;
+		try {
 
-            i2 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            mCreatedMediaFile = createNewMedia(Environment.DIRECTORY_PICTURES, "jpeg");
-            i2.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCreatedMediaFile));
-            mContext.startActivityForResult(i2, REQUEST_NEW_PHOTO);
-        } catch (final IOException e) {
-            Log.e(TAG, "error making temporary file", e);
-        }
-    }
+			i2 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			mCreatedMediaFile = createNewMedia(Environment.DIRECTORY_PICTURES, "jpeg");
+			i2.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCreatedMediaFile));
+			mContext.startActivityForResult(i2, REQUEST_NEW_PHOTO);
+		} catch (final IOException e) {
+			Log.e(TAG, "error making temporary file", e);
+		}
+	}
 
-    /**
-     * Call this from your activity's {@link Activity#onActivityResult(int, int, Intent)}.
-     *
-     * @param cast
-     *            the cast to which the media should be added
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     * @return true if the result was handled by this class
-     */
-    protected boolean onActivityResult(Uri cast, int requestCode, int resultCode, Intent data) {
+	public void pickMedia() {
+		final Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+		i.setType("image/* video/*");
+		mContext.startActivityForResult(i, REQUEST_PICK_MEDIA);
+	}
 
-        if ((requestCode == REQUEST_NEW_PHOTO || requestCode == REQUEST_NEW_VIDEO || requestCode == REQUEST_PICK_MEDIA)
-                && resultCode == Activity.RESULT_CANCELED) {
-            Log.d(TAG, "media adding cancelled");
-            mCreatedMediaFile = null;
-            return true;
-        }
-        Uri mCreatedMediaUri = Uri.fromFile(mCreatedMediaFile);
+	private void processNewPhotoResult(Uri cast, Intent data) {
+		Uri createdMediaUri = Uri.fromFile(mCreatedMediaFile);
+		if (data != null) {
+			final Uri imageCaptureResult = MediaUtils.handleImageCaptureResult(mContext, data);
+			if (imageCaptureResult != null) {
+				createdMediaUri = imageCaptureResult;
+			}
+		}
+		addMedia(cast, createdMediaUri);
+		mCreatedMediaFile = null;
+	}
 
-        switch (requestCode) {
-            case REQUEST_NEW_PHOTO:
-                if (data != null) {
-                    final Uri imageCaptureResult = MediaUtils.handleImageCaptureResult(mContext,
-                            data);
-                    if (imageCaptureResult != null) {
-                        mCreatedMediaUri = imageCaptureResult;
-                    }
-                }
-                addMedia(cast, mCreatedMediaUri);
-                mCreatedMediaFile = null;
-                return true;
+	private void processNewVideoResult(Uri cast, Intent data) {
+		Uri createdMediaUri = Uri.fromFile(mCreatedMediaFile);
+		if (data.getData() != null) {
+			createdMediaUri = data.getData();
+			Log.d(TAG,
+					"got a URL from the onActivityResult from adding a video: "
+							+ data.getDataString());
+		}
 
-            case REQUEST_NEW_VIDEO:
-                if (data.getData() != null) {
-                    mCreatedMediaUri = data.getData();
-                    Log.d(TAG,
-                            "got a URL from the onActivityResult from adding a video: "
-                                    + data.getDataString());
-                }
+		addMedia(cast, createdMediaUri);
 
-                addMedia(cast, mCreatedMediaUri);
+		mCreatedMediaFile = null;
+	}
 
-                mCreatedMediaFile = null;
-                return true;
+	/**
+	 * Call this from your activity's {@link Activity#onActivityResult(int, int, Intent)}.
+	 * 
+	 * @param cast
+	 *            the cast to which the media should be added
+	 * @param requestCode
+	 * @param resultCode
+	 * @param data
+	 * @return true if the result was handled by this class
+	 */
+	protected boolean onActivityResult(Uri cast, int requestCode, int resultCode, Intent data) {
 
-            case REQUEST_PICK_MEDIA:
-                final Uri media = data.getData();
-                if (media != null) {
-                    addMedia(cast, media);
-                }
-                return true;
+		if ((requestCode == REQUEST_NEW_PHOTO || requestCode == REQUEST_NEW_VIDEO || requestCode == REQUEST_PICK_MEDIA)
+				&& resultCode == Activity.RESULT_CANCELED) {
+			Log.d(TAG, "media adding cancelled");
+			mCreatedMediaFile = null;
+			return true;
+		}
 
-            default:
-                return false;
-        }
-    }
+		switch (requestCode) {
+			case REQUEST_NEW_PHOTO:
+				processNewPhotoResult(cast, data);
+				return true;
+
+			case REQUEST_NEW_VIDEO:
+				processNewVideoResult(cast, data);
+				return true;
+
+			case REQUEST_PICK_MEDIA:
+				final Uri media = data.getData();
+				if (media != null) {
+					addMedia(cast, media);
+				}
+				return true;
+
+			default:
+				return false;
+		}
+	}
 }

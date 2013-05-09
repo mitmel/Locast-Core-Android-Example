@@ -283,6 +283,10 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
                 takeVideo();
                 return true;
 
+			case R.id.pick_media:
+				pickMediaFromGallery();
+				return true;
+
             default:
                 return false;
         }
@@ -297,6 +301,11 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
         saveIfMissing();
         mCastMediaHelper.takeVideo();
     }
+
+	private void pickMediaFromGallery() {
+		saveIfMissing();
+		mCastMediaHelper.pickMedia();
+	}
 
     @Override
     public void setDraft(boolean draft) {
