@@ -55,7 +55,8 @@ public class CastMedia extends VideoContent implements Authorable {
 
     public static final ItemSyncMap SYNC_MAP = new ItemSyncMap();
 
-    public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.castmedia";
+	public static final String TYPE_DIR = ProviderUtils.toDirType(LocastProvider.AUTHORITY, PATH);
+	public static final String TYPE_ITEM = ProviderUtils.toItemType(LocastProvider.AUTHORITY, PATH);
 
     public static class ItemSyncMap extends VideoContent.ItemSyncMap {
         /**

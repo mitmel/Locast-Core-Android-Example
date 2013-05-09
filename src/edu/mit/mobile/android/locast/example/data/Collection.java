@@ -74,8 +74,8 @@ public class Collection extends JsonSyncableItem implements Favoritable, Authora
 
     public static final ItemSyncMap SYNC_MAP = new ItemSyncMap();
 
-    public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.collection";
-    public static final String TYPE_ITEM = "vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.collection";
+	public static final String TYPE_DIR = ProviderUtils.toDirType(LocastProvider.AUTHORITY, PATH);
+	public static final String TYPE_ITEM = ProviderUtils.toItemType(LocastProvider.AUTHORITY, PATH);
 
     public static class ItemSyncMap extends JsonSyncableItem.ItemSyncMap {
         /**
