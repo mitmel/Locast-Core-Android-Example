@@ -23,6 +23,7 @@ import edu.mit.mobile.android.locast.example.app.NoAccountFragment;
 import edu.mit.mobile.android.locast.example.app.OnRefreshListener;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.example.data.Collection;
+import edu.mit.mobile.android.locast.misti.R;
 
 public class ExampleActivity extends SherlockFragmentActivity implements TabListener {
 

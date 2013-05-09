@@ -21,7 +21,7 @@ import edu.mit.mobile.android.locast.data.interfaces.Titled;
 import edu.mit.mobile.android.locast.data.interfaces.TitledUtils;
 import edu.mit.mobile.android.locast.data.tags.Taggable;
 import edu.mit.mobile.android.locast.data.tags.TaggableUtils;
-import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.misti.R;
 
 @UriPath(Cast.PATH)
 @DBSortOrder(Cast.SORT_ORDER_DEFAULT)
@@ -78,8 +78,8 @@ public class Cast extends JsonSyncableItem implements Titled, PrivatelyAuthorabl
 
     public static final ItemSyncMap SYNC_MAP = new ItemSyncMap();
 
-    public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.cast";
-    public static final String TYPE_ITEM = "vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.cast";
+	public static final String TYPE_DIR = "vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.misti.cast";
+	public static final String TYPE_ITEM = "vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.misti.cast";
 
     @Override
     public SyncMap getSyncMap() {

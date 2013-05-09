@@ -20,8 +20,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.stackoverflow.ArrayUtils;
 
 import edu.mit.mobile.android.locast.data.interfaces.PrivatelyAuthorableUtils;
-import edu.mit.mobile.android.locast.example.BuildConfig;
-import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.misti.BuildConfig;
+import edu.mit.mobile.android.locast.misti.R;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.sync.LocastSyncService;

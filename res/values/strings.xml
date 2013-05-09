@@ -34,7 +34,7 @@
     <string name="delete_cast_media_confirm_message">Delete this item?</string>
     <string name="view_item">View item</string>
     <string name="auth_login_or_register">Login or Register</string>
-    <string name="auth_welcome_message">Welcome to Open Locast Example!</string>
+    <string name="auth_welcome_message">Welcome to Locast MISTI!</string>
     <string name="title_activity_cast_list_all">All Casts</string>
     <string name="title_activity_cast_list_tags">%1$s Casts</string>
     <string name="title_activity_cast_list_tags_comma">, </string>

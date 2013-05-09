@@ -11,7 +11,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import edu.mit.mobile.android.locast.data.tags.TaggableUtils;
-import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.misti.R;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.widget.TagButton;
 

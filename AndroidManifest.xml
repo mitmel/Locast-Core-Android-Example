@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="edu.mit.mobile.android.locast.example"
-    android:versionCode="1"
-    android:versionName="0.1" >
+    package="edu.mit.mobile.android.locast.misti"
+    android:versionCode="2"
+    android:versionName="0.2" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -38,10 +38,10 @@
     <!-- Google Maps API v2 -->
 
     <permission
-        android:name="edu.mit.mobile.android.locast.example.permission.MAPS_RECEIVE"
+        android:name="edu.mit.mobile.android.locast.misti.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="edu.mit.mobile.android.locast.example.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="edu.mit.mobile.android.locast.misti.permission.MAPS_RECEIVE" />
 
     <!-- Needed? -->
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -78,7 +78,7 @@
             android:value="AIzaSyCwsqICZkUnU8bC8E41ZHVj6OcXObDjwc0" />
 
         <activity
-            android:name=".ExampleActivity"
+            android:name="edu.mit.mobile.android.locast.example.ExampleActivity"
             android:label="@string/title_activity_example" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -89,59 +89,59 @@
 
         <!-- casts -->
         <activity
-            android:name=".app.CastViewEditActivity"
+            android:name="edu.mit.mobile.android.locast.example.app.CastViewEditActivity"
             android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.cast" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.misti.cast" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.cast" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.misti.cast" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.INSERT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.cast" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.misti.cast" />
             </intent-filter>
         </activity>
-        <activity android:name=".app.CastListActivity" >
+        <activity android:name="edu.mit.mobile.android.locast.example.app.CastListActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.cast" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.misti.cast" />
             </intent-filter>
         </activity>
 
         <!-- collections -->
 
-        <activity android:name=".app.CollectionDetailActivity" >
+        <activity android:name="edu.mit.mobile.android.locast.example.app.CollectionDetailActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.collection" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.misti.collection" />
             </intent-filter>
         </activity>
 
         <!-- auth -->
 
-        <activity android:name=".accounts.AuthenticatorActivity" />
-        <activity android:name=".accounts.RegisterActivity" />
+        <activity android:name="edu.mit.mobile.android.locast.example.accounts.AuthenticatorActivity" />
+        <activity android:name="edu.mit.mobile.android.locast.example.accounts.RegisterActivity" />
 
         <service
-            android:name=".accounts.AuthenticationService"
+            android:name="edu.mit.mobile.android.locast.example.accounts.AuthenticationService"
             android:exported="true"
             android:permission="android.permission.AUTHENTICATE_ACCOUNTS" >
             <intent-filter>
@@ -161,9 +161,9 @@
         -->
 
         <service
-            android:name=".sync.SyncService"
+            android:name="edu.mit.mobile.android.locast.example.sync.SyncService"
             android:exported="true"
-            android:process="edu.mit.mobile.android.locast.example.Sync"
+            android:process="edu.mit.mobile.android.locast.misti.Sync"
             tools:ignore="ExportedService" >
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
@@ -208,16 +208,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <!-- MIME type for a cast -->
-                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.cast" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.cast" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.misti.cast" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.misti.cast" />
 
                 <!-- MIME type for cast media -->
-                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.castmedia" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.castmedia" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.misti.castmedia" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.misti.castmedia" />
 
                 <!-- MIME type for a collection -->
-                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.collection" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.collection" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.misti.collection" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.misti.collection" />
             </intent-filter>
 
             <!-- make sure the the associated syncadapter XML file matches the items here -->
@@ -235,16 +235,16 @@
         Additionally, make sure the MIME types match that of the other MIME type definitions. See the README for details.
         -->
         <service
-            android:name=".sync.MediaSyncService"
+            android:name="edu.mit.mobile.android.locast.example.sync.MediaSyncService"
             android:exported="false"
-            android:process="edu.mit.mobile.android.locast.example.Sync" >
+            android:process="edu.mit.mobile.android.locast.misti.Sync" >
             <intent-filter>
                 <action android:name="edu.mit.mobile.android.locast.ACTION_SYNC_RESOURCES" />
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.example.castmedia" />
-                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.castmedia" />
+                <data android:mimeType="vnd.android.cursor.item/vnd.edu.mit.mobile.android.locast.misti.castmedia" />
+                <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.misti.castmedia" />
             </intent-filter>
         </service>
 
@@ -254,10 +254,10 @@
         -->
 
         <provider
-            android:name=".data.LocastProvider"
-            android:authorities="edu.mit.mobile.android.locast.example"
+            android:name="edu.mit.mobile.android.locast.example.data.LocastProvider"
+            android:authorities="edu.mit.mobile.android.locast.misti"
             android:exported="false"
-            android:process="edu.mit.mobile.android.locast.example.Sync" />
+            android:process="edu.mit.mobile.android.locast.misti.Sync" />
     </application>
 
 </manifest>

@@ -42,7 +42,7 @@ import com.stackoverflow.ArrayUtils;
 
 import edu.mit.mobile.android.imagecache.ImageCache;
 import edu.mit.mobile.android.imagecache.ImageCache.OnImageLoadListener;
-import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.misti.R;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.maps.LocatableMapFragment;
 

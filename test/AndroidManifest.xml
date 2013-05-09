@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="edu.mit.mobile.android.locast.example.test"
+    package="edu.mit.mobile.android.locast.misti.test"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -10,7 +10,7 @@
 
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
-        android:targetPackage="edu.mit.mobile.android.locast.example" />
+        android:targetPackage="edu.mit.mobile.android.locast.misti" />
 
     <application
         android:icon="@drawable/ic_launcher"
