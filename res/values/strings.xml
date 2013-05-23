@@ -1,8 +1,8 @@
 <resources>
 
-    <string name="app_name">Locast Core Example</string>
+    <string name="app_name">Not Far From The Tree</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_example">ExampleActivity</string>
+    <string name="title_activity_example">Not Far From The Tree</string>
     <string name="title_activity_cast_list">Casts</string>
     <string name="titled_title">Title</string>
     <string name="titled_description">Description</string>
@@ -34,7 +34,7 @@
     <string name="delete_cast_media_confirm_message">Delete this item?</string>
     <string name="view_item">View item</string>
     <string name="auth_login_or_register">Login or Register</string>
-    <string name="auth_welcome_message">Welcome to Open Locast Example!</string>
+    <string name="auth_welcome_message">Welcome to Not Far From The Tree\'s Blossom Watch Map!</string>
     <string name="title_activity_cast_list_all">All Casts</string>
     <string name="title_activity_cast_list_tags">%1$s Casts</string>
     <string name="title_activity_cast_list_tags_comma">, </string>
