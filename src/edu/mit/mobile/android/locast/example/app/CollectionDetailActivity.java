@@ -75,13 +75,12 @@ public class CollectionDetailActivity extends SherlockFragmentActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.cast_new:
-                createNewCast();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
+        final int itemId = item.getItemId();
+        if (itemId == R.id.cast_new) {
+            createNewCast();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 

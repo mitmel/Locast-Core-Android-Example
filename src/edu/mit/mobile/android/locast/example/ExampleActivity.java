@@ -252,11 +252,10 @@ public class ExampleActivity extends SherlockFragmentActivity implements TabList
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.logout:
-				showLogout();
-				break;
-		}
+        final int itemId = item.getItemId();
+        if (itemId == R.id.logout) {
+            showLogout();
+        }
 		return super.onOptionsItemSelected(item);
 	}
 

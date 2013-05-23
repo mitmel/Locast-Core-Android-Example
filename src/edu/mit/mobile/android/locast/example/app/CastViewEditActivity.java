@@ -210,18 +210,15 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         final int id = item.getItemId();
 
-        switch (id) {
-            case R.id.edit:
-                editCast();
+        if (id == R.id.edit) {
+            editCast();
+            return true;
+        } else {
+            if (onButtonPressed(id)) {
                 return true;
-
-            default:
-
-                if (onButtonPressed(id)) {
-                    return true;
-                } else {
-                    return super.onOptionsItemSelected(item);
-                }
+            } else {
+                return super.onOptionsItemSelected(item);
+            }
         }
     }
 
@@ -274,21 +271,17 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
     }
 
     private boolean onButtonPressed(int id) {
-        switch (id) {
-            case R.id.new_photo:
-                takePicture();
-                return true;
-
-            case R.id.new_video:
-                takeVideo();
-                return true;
-
-			case R.id.pick_media:
-				pickMediaFromGallery();
-				return true;
-
-            default:
-                return false;
+        if (id == R.id.new_photo) {
+            takePicture();
+            return true;
+        } else if (id == R.id.new_video) {
+            takeVideo();
+            return true;
+        } else if (id == R.id.pick_media) {
+            pickMediaFromGallery();
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -383,14 +376,12 @@ public class CastViewEditActivity extends LocatableItemMapActivity {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             Log.d(TAG, "action item clicked: " + mode + "; " + item);
             final int id = item.getItemId();
-            switch (id) {
-                case R.id.cancel:
-                    mCanceled = true;
-                    mode.finish();
-                    return true;
-                default:
-                    return onButtonPressed(id);
-
+            if (id == R.id.cancel) {
+                mCanceled = true;
+                mode.finish();
+                return true;
+            } else {
+                return onButtonPressed(id);
             }
         }
 

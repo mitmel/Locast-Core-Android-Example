@@ -49,11 +49,10 @@ public class NoAccountFragment extends Fragment implements OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.login:
-                startActivityForResult(new Intent(getActivity(), AuthenticatorActivity.class),
-                        REQUEST_LOGIN);
-                break;
+        final int id = v.getId();
+        if (id == R.id.login) {
+            startActivityForResult(new Intent(getActivity(), AuthenticatorActivity.class),
+                    REQUEST_LOGIN);
         }
     }
 

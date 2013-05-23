@@ -152,34 +152,27 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        switch (v.getId()) {
-            case R.id.cast_media: {
-                getActivity().getMenuInflater().inflate(R.menu.context_cast_media, menu);
-                final Cursor c = mCastMediaAdapter.getCursor();
-                if (c == null) {
-                    return;
-                }
-                AdapterView.AdapterContextMenuInfo info;
-                try {
-                    info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-                } catch (final ClassCastException e) {
-                    Log.e(TAG, "bad menuInfo", e);
-                    return;
-                }
-
-                c.moveToPosition(info.position);
-
-                final String myUserUri = Authenticator.getUserUri(getActivity(),
-                        Authenticator.ACCOUNT_TYPE);
-
-                final boolean isEditable = AuthorableUtils.canEdit(myUserUri, c);
-
-                menu.findItem(R.id.delete).setVisible(isEditable);
-
+        final int id = v.getId();
+        if (id == R.id.cast_media) {
+            getActivity().getMenuInflater().inflate(R.menu.context_cast_media, menu);
+            final Cursor c = mCastMediaAdapter.getCursor();
+            if (c == null) {
+                return;
             }
-                break;
-            default:
-                super.onCreateContextMenu(menu, v, menuInfo);
+            AdapterView.AdapterContextMenuInfo info;
+            try {
+                info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            } catch (final ClassCastException e) {
+                Log.e(TAG, "bad menuInfo", e);
+                return;
+            }
+            c.moveToPosition(info.position);
+            final String myUserUri =
+                    Authenticator.getUserUri(getActivity(), Authenticator.ACCOUNT_TYPE);
+            final boolean isEditable = AuthorableUtils.canEdit(myUserUri, c);
+            menu.findItem(R.id.delete).setVisible(isEditable);
+        } else {
+            super.onCreateContextMenu(menu, v, menuInfo);
         }
 
     }
@@ -196,22 +189,20 @@ public abstract class CastFragment extends Fragment implements LoaderCallbacks<C
 
         final Uri itemUri = ContentUris.withAppendedId(mCastMedia, info.id);
 
-        switch (item.getItemId()) {
-            case R.id.delete:
-                showDeleteDialog(itemUri);
-                return true;
-
-            case R.id.view: {
-                final Cursor c = mCastMediaAdapter.getCursor();
-                c.moveToPosition(info.position);
-                final Intent i = CastMedia.showMedia(getActivity(), c, mCastMedia);
-                if (i != null) {
-                    startActivity(i);
-                }
-                return true;
+        final int itemId = item.getItemId();
+        if (itemId == R.id.delete) {
+            showDeleteDialog(itemUri);
+            return true;
+        } else if (itemId == R.id.view) {
+            final Cursor c = mCastMediaAdapter.getCursor();
+            c.moveToPosition(info.position);
+            final Intent i = CastMedia.showMedia(getActivity(), c, mCastMedia);
+            if (i != null) {
+                startActivity(i);
             }
-            default:
-                return super.onContextItemSelected(item);
+            return true;
+        } else {
+            return super.onContextItemSelected(item);
         }
     }
 
