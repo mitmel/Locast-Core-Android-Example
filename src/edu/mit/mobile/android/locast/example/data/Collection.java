@@ -34,7 +34,7 @@ import edu.mit.mobile.android.locast.data.interfaces.Favoritable;
 import edu.mit.mobile.android.locast.data.interfaces.FavoritableUtils;
 import edu.mit.mobile.android.locast.data.interfaces.Titled;
 import edu.mit.mobile.android.locast.data.interfaces.TitledUtils;
-import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.nfftt.R;
 
 @UriPath(Collection.PATH)
 public class Collection extends JsonSyncableItem implements Favoritable, Authorable, Titled {

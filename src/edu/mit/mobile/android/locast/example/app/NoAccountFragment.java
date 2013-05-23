@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.nfftt.R;
 import edu.mit.mobile.android.locast.example.accounts.AuthenticatorActivity;
 
 public class NoAccountFragment extends Fragment implements OnClickListener {

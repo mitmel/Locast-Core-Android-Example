@@ -11,7 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 import edu.mit.mobile.android.content.ProviderUtils;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
-import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.nfftt.R;
 import edu.mit.mobile.android.locast.sync.LocastSyncService;
 
 /**

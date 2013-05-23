@@ -6,7 +6,7 @@ import android.database.Cursor;
 import com.stackoverflow.ArrayUtils;
 
 import edu.mit.mobile.android.imagecache.SimpleThumbnailCursorAdapter;
-import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.nfftt.R;
 import edu.mit.mobile.android.locast.example.data.CastMedia;
 
 public class CastMediaAdapter extends SimpleThumbnailCursorAdapter {

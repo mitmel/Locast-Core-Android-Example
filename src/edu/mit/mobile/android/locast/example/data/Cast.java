@@ -21,7 +21,7 @@ import edu.mit.mobile.android.locast.data.interfaces.Titled;
 import edu.mit.mobile.android.locast.data.interfaces.TitledUtils;
 import edu.mit.mobile.android.locast.data.tags.Taggable;
 import edu.mit.mobile.android.locast.data.tags.TaggableUtils;
-import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.nfftt.R;
 
 @UriPath(Cast.PATH)
 @DBSortOrder(Cast.SORT_ORDER_DEFAULT)

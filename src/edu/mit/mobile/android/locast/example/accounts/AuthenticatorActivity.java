@@ -3,7 +3,7 @@ package edu.mit.mobile.android.locast.example.accounts;
 import android.accounts.Account;
 import android.content.Intent;
 import edu.mit.mobile.android.locast.accounts.AbsLocastAuthenticatorActivity;
-import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.nfftt.R;
 import edu.mit.mobile.android.locast.example.data.LocastProvider;
 
 public class AuthenticatorActivity extends AbsLocastAuthenticatorActivity {

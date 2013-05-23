@@ -15,7 +15,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.nfftt.R;
 import edu.mit.mobile.android.locast.example.data.Collection;
 
 public class CollectionDetailActivity extends SherlockFragmentActivity {

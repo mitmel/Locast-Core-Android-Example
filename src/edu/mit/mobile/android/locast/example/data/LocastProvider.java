@@ -15,14 +15,14 @@ import edu.mit.mobile.android.locast.data.NoPublicPath;
 import edu.mit.mobile.android.locast.data.tags.IdenticalTagFinder;
 import edu.mit.mobile.android.locast.data.tags.Tag;
 import edu.mit.mobile.android.locast.data.tags.TaggableWrapper;
-import edu.mit.mobile.android.locast.example.BuildConfig;
+import edu.mit.mobile.android.locast.nfftt.BuildConfig;
 import edu.mit.mobile.android.locast.net.NetworkClient;
 import edu.mit.mobile.android.locast.sync.SyncableProvider;
 import edu.mit.mobile.android.locast.sync.SyncableSimpleContentProvider;
 
 public class LocastProvider extends SyncableSimpleContentProvider implements SyncableProvider {
 
-    public static final String AUTHORITY = "edu.mit.mobile.android.locast.example";
+    public static final String AUTHORITY = "edu.mit.mobile.android.locast.nfftt";
 
     private static final int DB_VER = 1;
 

@@ -32,7 +32,7 @@ import edu.mit.mobile.android.locast.app.DeleteDialogFragment;
 import edu.mit.mobile.android.locast.app.DeleteDialogFragment.OnDeleteListener;
 import edu.mit.mobile.android.locast.data.CastMedia;
 import edu.mit.mobile.android.locast.data.interfaces.AuthorableUtils;
-import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.nfftt.R;
 import edu.mit.mobile.android.locast.example.accounts.Authenticator;
 import edu.mit.mobile.android.locast.example.data.Cast;
 import edu.mit.mobile.android.locast.sync.LocastSyncService;

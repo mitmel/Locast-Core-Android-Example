@@ -26,8 +26,8 @@ import edu.mit.mobile.android.imagecache.ImageCache;
 import edu.mit.mobile.android.imagecache.ImageCache.OnImageLoadListener;
 import edu.mit.mobile.android.locast.data.JsonSyncableItem;
 import edu.mit.mobile.android.locast.data.interfaces.Locatable;
-import edu.mit.mobile.android.locast.example.BuildConfig;
-import edu.mit.mobile.android.locast.example.R;
+import edu.mit.mobile.android.locast.nfftt.BuildConfig;
+import edu.mit.mobile.android.locast.nfftt.R;
 import edu.mit.mobile.android.maps.GoogleStaticMapView;
 import edu.mit.mobile.android.maps.OnMapUpdateListener;
 
