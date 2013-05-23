@@ -65,17 +65,17 @@
 
         <meta-data
             android:name="edu.mit.mobile.android.locast.base_url"
-            android:value="https://locast.mit.edu/openlocast/api/" />
+            android:value="http://locast.mit.edu/nfftt/api/" />
 
         <!-- Google Maps API v2 -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="" />
+            android:value="AIzaSyAHT58NyeD2K9LMKz7172Va6ff19IEu8N4" />
         <!-- end Google Maps API v2 -->
 
         <meta-data
             android:name="edu.mit.mobile.android.maps.GOOGLE_STATIC_MAPS_API_KEY"
-android:value="" />
+            android:value="AIzaSyAINSHcqSvnf4aL_62EmnT88UnT2MVOj6k" />
 
         <activity
             android:name="edu.mit.mobile.android.locast.example.ExampleActivity"
@@ -190,11 +190,11 @@ android:value="" />
                 <!-- http[s]://locast.mit.edu/openlocast/api/ -->
                 <data
                     android:host="locast.mit.edu"
-                    android:pathPrefix="/openlocast/api/"
+                    android:pathPrefix="/nfftt/api/"
                     android:scheme="http" />
                 <data
                     android:host="locast.mit.edu"
-                    android:pathPrefix="/openlocast/api/"
+                    android:pathPrefix="/nfftt/api/"
                     android:scheme="https" />
             </intent-filter>
 
