@@ -62,6 +62,7 @@
         android:theme="@style/AppTheme" >
 
         <!-- specify the URL of the site here. Make sure to update the URLs below too. -->
+
         <meta-data
             android:name="edu.mit.mobile.android.locast.base_url"
             android:value="https://locast.mit.edu/openlocast/api/" />
@@ -77,7 +78,7 @@
 android:value="" />
 
         <activity
-            android:name=".ExampleActivity"
+            android:name="edu.mit.mobile.android.locast.example.ExampleActivity"
             android:label="@string/title_activity_example" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -88,7 +89,7 @@ android:value="" />
 
         <!-- casts -->
         <activity
-            android:name=".app.CastViewEditActivity"
+            android:name="edu.mit.mobile.android.locast.example.app.CastViewEditActivity"
             android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -112,7 +113,7 @@ android:value="" />
                 <data android:mimeType="vnd.android.cursor.dir/vnd.edu.mit.mobile.android.locast.example.cast" />
             </intent-filter>
         </activity>
-        <activity android:name=".app.CastListActivity" >
+        <activity android:name="edu.mit.mobile.android.locast.example.app.CastListActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -124,7 +125,7 @@ android:value="" />
 
         <!-- collections -->
 
-        <activity android:name=".app.CollectionDetailActivity" >
+        <activity android:name="edu.mit.mobile.android.locast.example.app.CollectionDetailActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -136,11 +137,11 @@ android:value="" />
 
         <!-- auth -->
 
-        <activity android:name=".accounts.AuthenticatorActivity" />
-        <activity android:name=".accounts.RegisterActivity" />
+        <activity android:name="edu.mit.mobile.android.locast.example.accounts.AuthenticatorActivity" />
+        <activity android:name="edu.mit.mobile.android.locast.example.accounts.RegisterActivity" />
 
         <service
-            android:name=".accounts.AuthenticationService"
+            android:name="edu.mit.mobile.android.locast.example.accounts.AuthenticationService"
             android:exported="true"
             android:permission="android.permission.AUTHENTICATE_ACCOUNTS" >
             <intent-filter>
@@ -160,7 +161,7 @@ android:value="" />
         -->
 
         <service
-            android:name=".sync.SyncService"
+            android:name="edu.mit.mobile.android.locast.example.sync.SyncService"
             android:exported="true"
             android:process="edu.mit.mobile.android.locast.example.Sync"
             tools:ignore="ExportedService" >
@@ -234,7 +235,7 @@ android:value="" />
         Additionally, make sure the MIME types match that of the other MIME type definitions. See the README for details.
         -->
         <service
-            android:name=".sync.MediaSyncService"
+            android:name="edu.mit.mobile.android.locast.example.sync.MediaSyncService"
             android:exported="false"
             android:process="edu.mit.mobile.android.locast.example.Sync" >
             <intent-filter>
@@ -253,7 +254,7 @@ android:value="" />
         -->
 
         <provider
-            android:name=".data.LocastProvider"
+            android:name="edu.mit.mobile.android.locast.example.data.LocastProvider"
             android:authorities="edu.mit.mobile.android.locast.example"
             android:exported="false"
             android:process="edu.mit.mobile.android.locast.example.Sync" />
