@@ -6,7 +6,7 @@
 	url = https://github.com/mitmel/Android-Image-Cache.git
 [submodule "libs-src/staticmap"]
 	path = libs-src/staticmap
-	url = http://mel-tools.mit.edu/git-ro/android-staticmap.git
+	url = http://github.com/mitmel/android-staticmap.git
 [submodule "libs-src/locast_core"]
 	path = libs-src/locast_core
 	url = https://github.com/mitmel/Locast-Core-Android.git
